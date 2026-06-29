@@ -7,123 +7,186 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: { extend: { fontFamily: { sans: ['Inter','system-ui','sans-serif'] } } }
-    }
-  </script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','system-ui','sans-serif'] } } } }</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; }
     body { font-family: 'Inter', sans-serif; background: #0a0f1e; color: #e2e8f0; overflow-x: hidden; }
 
-    /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 99px; }
 
-    /* ── Screens ── */
     .screen { display: none; }
     .screen.active { display: flex; }
 
-    /* ── Sidebar ── */
     #sidebar { width: 240px; min-height: 100vh; background: #060d1f; border-right: 1px solid rgba(255,255,255,.07); flex-shrink: 0; }
     .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 10px; cursor: pointer; font-size: .875rem; font-weight: 500; color: #64748b; transition: all .15s; margin: 2px 8px; }
     .nav-item:hover { background: rgba(255,255,255,.05); color: #e2e8f0; }
     .nav-item.active { background: rgba(34,197,94,.12); color: #4ade80; }
     .nav-item svg { flex-shrink: 0; }
 
-    /* ── Views ── */
     .view { display: none; }
     .view.active { display: block; }
 
-    /* ── Cards ── */
     .card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 16px; }
     .kpi-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 16px; padding: 20px; }
 
-    /* ── Badges de status ── */
     .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
-    .badge-novo       { background: rgba(59,130,246,.15); color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
-    .badge-contatado  { background: rgba(251,191,36,.15); color: #fbbf24; border: 1px solid rgba(251,191,36,.25); }
-    .badge-proposta   { background: rgba(168,85,247,.15); color: #c084fc; border: 1px solid rgba(168,85,247,.25); }
-    .badge-aprovado   { background: rgba(34,197,94,.15);  color: #4ade80; border: 1px solid rgba(34,197,94,.25); }
-    .badge-perdido    { background: rgba(239,68,68,.15);  color: #f87171; border: 1px solid rgba(239,68,68,.25); }
+    .badge-novo      { background: rgba(59,130,246,.15);  color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
+    .badge-contatado { background: rgba(251,191,36,.15);  color: #fbbf24; border: 1px solid rgba(251,191,36,.25); }
+    .badge-proposta  { background: rgba(168,85,247,.15);  color: #c084fc; border: 1px solid rgba(168,85,247,.25); }
+    .badge-aprovado  { background: rgba(34,197,94,.15);   color: #4ade80; border: 1px solid rgba(34,197,94,.25); }
+    .badge-perdido   { background: rgba(239,68,68,.15);   color: #f87171; border: 1px solid rgba(239,68,68,.25); }
+    .badge-admin     { background: rgba(251,191,36,.12);  color: #fbbf24; border: 1px solid rgba(251,191,36,.2); }
+    .badge-viewer    { background: rgba(100,116,139,.12); color: #94a3b8; border: 1px solid rgba(100,116,139,.2); }
 
-    /* ── Inputs ── */
     .inp { background: rgba(255,255,255,.05); border: 1.5px solid rgba(255,255,255,.1); border-radius: 10px; padding: 10px 14px; color: #f1f5f9; font-size: .9rem; outline: none; transition: border-color .2s, box-shadow .2s; width: 100%; }
     .inp::placeholder { color: rgba(255,255,255,.25); }
     .inp:focus { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.12); }
     select.inp option { background: #1e293b; }
 
-    /* ── Buttons ── */
-    .btn-primary { background: linear-gradient(135deg,#22c55e,#16a34a); color: #fff; font-weight: 700; font-size: .9rem; border-radius: 10px; padding: 10px 20px; cursor: pointer; border: none; transition: all .18s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary   { background: linear-gradient(135deg,#22c55e,#16a34a); color: #fff; font-weight: 700; font-size: .9rem; border-radius: 10px; padding: 10px 20px; cursor: pointer; border: none; transition: all .18s; display: inline-flex; align-items: center; gap: 6px; }
     .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(34,197,94,.35); }
     .btn-secondary { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); color: #e2e8f0; font-weight: 600; font-size: .85rem; border-radius: 10px; padding: 8px 16px; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; }
     .btn-secondary:hover { background: rgba(255,255,255,.1); }
+    .btn-danger    { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25); color: #f87171; font-weight: 600; font-size: .8rem; border-radius: 8px; padding: 6px 12px; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 5px; }
+    .btn-danger:hover { background: rgba(239,68,68,.2); }
 
-    /* ── Table ── */
     .lead-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
     .lead-table th { padding: 10px 14px; text-align: left; font-size: .7rem; font-weight: 700; color: #64748b; letter-spacing: .08em; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,.06); white-space: nowrap; }
     .lead-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: middle; }
     .lead-table tr:hover td { background: rgba(255,255,255,.03); cursor: pointer; }
     .lead-table tr:last-child td { border-bottom: none; }
 
-    /* ── Kanban ── */
-    .kanban-col { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07); border-radius: 14px; min-width: 220px; flex: 1; }
+    .kanban-col  { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07); border-radius: 14px; min-width: 220px; flex: 1; }
     .kanban-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 12px; margin: 8px; cursor: pointer; transition: all .15s; }
     .kanban-card:hover { background: rgba(255,255,255,.08); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.3); }
 
-    /* ── Modal ── */
     #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 100; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px); }
     #modal-overlay.open { display: flex; }
     #modal-box { background: #0f172a; border: 1px solid rgba(255,255,255,.1); border-radius: 20px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
 
-    /* ── Animations ── */
-    @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
-    .fade-in { animation: fadeIn .3s ease; }
+    /* tab pills */
+    .tab-pill { padding: 7px 18px; border-radius: 8px; font-size: .82rem; font-weight: 600; cursor: pointer; color: #64748b; transition: all .15s; }
+    .tab-pill.active { background: rgba(34,197,94,.15); color: #4ade80; }
 
-    /* ── Mobile ── */
+    /* feature grid home */
+    .feature-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 16px; padding: 24px; }
+
+    /* gradient text */
+    .grad-text { background: linear-gradient(135deg,#4ade80,#22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    @keyframes fadeIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+    .fade-in { animation: fadeIn .35s ease; }
+
+    @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,.25); } 50% { box-shadow: 0 0 0 12px rgba(34,197,94,.0); } }
+    .pulse-glow { animation: pulse-glow 2.5s infinite; }
+
     @media (max-width: 768px) {
       #sidebar { display: none; }
       #sidebar.open { display: flex; position: fixed; z-index: 50; height: 100vh; flex-direction: column; }
-      #mobile-overlay { display: block !important; }
     }
   </style>
 </head>
 <body>
 
-<!-- ════════════════════════════════════════
-     TELA 1: SETUP (primeira vez)
-════════════════════════════════════════ -->
-<div id="screen-setup" class="screen active min-h-screen flex items-center justify-center p-4">
+<!-- ══════════════════════════════════════
+     TELA 0: HOME — Apresentação
+══════════════════════════════════════ -->
+<div id="screen-home" class="screen active min-h-screen flex-col">
+
+  <!-- Navbar -->
+  <nav class="flex items-center justify-between px-6 py-4 border-b border-white/5 sticky top-0 bg-[#0a0f1e]/95 backdrop-blur-md z-10">
+    <div class="flex items-center gap-2.5">
+      <span class="text-xl">🚀</span>
+      <span class="font-black text-white text-base tracking-tight">AUTOMATIZE <span class="text-green-400 font-black">CRM</span></span>
+    </div>
+    <button onclick="goToLogin()" class="btn-primary py-2 px-5 text-sm">Entrar</button>
+  </nav>
+
+  <!-- Hero -->
+  <section class="flex-1 flex flex-col items-center justify-center text-center px-6 py-20 fade-in">
+    <div class="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-1.5 text-green-400 text-xs font-semibold mb-6">
+      ✦ Plataforma de gestão de leads automotivos
+    </div>
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-6 max-w-3xl">
+      Gerencie seus leads com<br><span class="grad-text">inteligência e velocidade</span>
+    </h1>
+    <p class="text-slate-400 text-lg max-w-xl mb-10 leading-relaxed">
+      CRM integrado ao Google Sheets. Visualize o pipeline, acompanhe cada lead e tome decisões baseadas em dados — tudo em tempo real.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 items-center">
+      <button onclick="goToLogin()" class="btn-primary text-base py-3.5 px-8 pulse-glow">
+        Acessar o CRM →
+      </button>
+      <button onclick="showScreen('screen-setup')" class="btn-secondary text-sm py-3 px-6 text-slate-500">
+        ⚙️ Configurar novo acesso
+      </button>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="max-w-5xl mx-auto w-full px-6 pb-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="feature-card text-center">
+      <div class="text-3xl mb-3">📊</div>
+      <h3 class="font-bold text-white text-sm mb-1">Dashboard em tempo real</h3>
+      <p class="text-slate-500 text-xs leading-relaxed">KPIs, gráficos de pipeline e leads recentes num só lugar.</p>
+    </div>
+    <div class="feature-card text-center">
+      <div class="text-3xl mb-3">🗂️</div>
+      <h3 class="font-bold text-white text-sm mb-1">Pipeline Kanban</h3>
+      <p class="text-slate-500 text-xs leading-relaxed">Visualize cada lead por estágio: Novo → Aprovado.</p>
+    </div>
+    <div class="feature-card text-center">
+      <div class="text-3xl mb-3">🔄</div>
+      <h3 class="font-bold text-white text-sm mb-1">Sync com Google Sheets</h3>
+      <p class="text-slate-500 text-xs leading-relaxed">Leads chegam direto das landing pages para o CRM.</p>
+    </div>
+    <div class="feature-card text-center">
+      <div class="text-3xl mb-3">👥</div>
+      <h3 class="font-bold text-white text-sm mb-1">Multi-usuário</h3>
+      <p class="text-slate-500 text-xs leading-relaxed">Admins e visualizadores com credenciais separadas.</p>
+    </div>
+  </section>
+
+  <footer class="text-center text-xs text-slate-700 pb-6">
+    &copy; 2026 AUTOMATIZE · Todos os direitos reservados
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     TELA 1: SETUP
+══════════════════════════════════════ -->
+<div id="screen-setup" class="screen min-h-screen flex-col items-center justify-center p-4">
   <div class="w-full max-w-lg fade-in">
+
+    <!-- Header -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-green-500/10 border border-green-500/20 text-3xl mb-4">🚀</div>
-      <h1 class="text-2xl font-black text-white mb-1">CRM · AUTOMATIZE</h1>
-      <p class="text-slate-400 text-sm">Configure seu CRM em 2 passos simples</p>
+      <button onclick="showScreen('screen-home')" class="text-slate-500 hover:text-slate-300 text-xs mb-6 flex items-center gap-1 mx-auto transition-colors">
+        ← Voltar à apresentação
+      </button>
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-green-500/10 border border-green-500/20 text-2xl mb-4">⚙️</div>
+      <h1 class="text-2xl font-black text-white mb-1">Configurar CRM</h1>
+      <p class="text-slate-400 text-sm">Configure o acesso em dois passos</p>
     </div>
 
-    <div class="card p-6 space-y-6">
+    <!-- Tabs -->
+    <div class="flex gap-2 bg-white/5 rounded-xl p-1 mb-6">
+      <button onclick="setupTab('new')" id="tab-new" class="tab-pill active flex-1 text-center">Nova instalação</button>
+      <button onclick="setupTab('import')" id="tab-import" class="tab-pill flex-1 text-center">Importar código</button>
+    </div>
 
-      <!-- Step 1: API -->
+    <!-- Tab: Nova instalação -->
+    <div id="setup-panel-new" class="card p-6 space-y-5">
       <div>
-        <div class="flex items-center gap-3 mb-3">
-          <span class="w-6 h-6 rounded-full bg-green-500/20 border border-green-500/30 text-green-400 text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
-          <p class="font-semibold text-white text-sm">Cole a URL do seu Apps Script</p>
-        </div>
+        <label class="text-xs font-semibold text-slate-400 uppercase tracking-widest block mb-2">1. URL do Apps Script</label>
         <input id="setup-api" class="inp" type="url" placeholder="https://script.google.com/macros/s/.../exec" />
-        <p class="text-xs text-slate-500 mt-2">
-          Para obter esta URL: no Google Sheets → Extensões → Apps Script → adicione o código abaixo → Implantar → Nova implantação → App da Web.
-        </p>
-
-        <!-- Código do doGet -->
-        <details class="mt-3">
-          <summary class="text-xs text-green-400 cursor-pointer font-semibold hover:text-green-300">Ver código para adicionar no Apps Script ▾</summary>
+        <details class="mt-2">
+          <summary class="text-xs text-green-400 cursor-pointer font-semibold hover:text-green-300">Ver código para o Apps Script ▾</summary>
           <div class="mt-2 bg-slate-900 rounded-lg p-3 relative">
             <button onclick="copyCode()" class="absolute top-2 right-2 text-xs text-slate-400 hover:text-white bg-slate-800 px-2 py-1 rounded">Copiar</button>
-            <pre id="code-snippet" class="text-xs text-green-300 overflow-x-auto whitespace-pre-wrap"><code>// ─── SUBSTITUA TODO O CONTEÚDO DO APPS SCRIPT POR ESTE CÓDIGO ───
-
-function doPost(e) {
+            <pre id="code-snippet" class="text-xs text-green-300 overflow-x-auto whitespace-pre-wrap"><code>function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     var data  = JSON.parse(e.postData.contents);
@@ -163,15 +226,14 @@ function doGet(e) {
     if (data.length <= 1) {
       return ContentService.createTextOutput(JSON.stringify({status:'ok',leads:[]})).setMimeType(ContentService.MimeType.JSON);
     }
-    // Colunas fixas na ordem exata que o doPost escreve
     var COLS = [
       'Data','Nome','Email','WhatsApp',
       'Renda','Nome Sujo','Score','Tentativa',
-      'Estoque','Vendas Mês','Giro','Tráfego Pago',
-      'Gestão Mktg','Verba Mídia','Leads Mês','CPL',
-      'Vendas Fluxo','Vendas Orgânicas','Closers','SDR','CRM',
+      'Estoque','Vendas Mes','Giro','Trafego Pago',
+      'Gestao Mktg','Verba Midia','Leads Mes','CPL',
+      'Vendas Fluxo','Vendas Organicas','Closers','SDR','CRM',
       'NPS Vendas','NPS Leads','NPS Processos','NPS Marketing',
-      'Meta Crescimento','Domínio Métricas','Performance Score'
+      'Meta Crescimento','Dominio Metricas','Performance Score'
     ];
     var leads = data.slice(1).map(function(row, i) {
       var obj = { _row: i + 2 };
@@ -189,49 +251,76 @@ function doGet(e) {
 
       <hr class="border-white/5" />
 
-      <!-- Step 2: Senha -->
       <div>
-        <div class="flex items-center gap-3 mb-3">
-          <span class="w-6 h-6 rounded-full bg-green-500/20 border border-green-500/30 text-green-400 text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
-          <p class="font-semibold text-white text-sm">Defina uma senha para o CRM</p>
+        <label class="text-xs font-semibold text-slate-400 uppercase tracking-widest block mb-3">2. Criar usuário administrador</label>
+        <div class="space-y-3">
+          <input id="setup-name"  class="inp" type="text"     placeholder="Seu nome completo" />
+          <input id="setup-user"  class="inp" type="text"     placeholder="Nome de usuário (ex: admin)" autocomplete="off" />
+          <input id="setup-pass"  class="inp" type="password" placeholder="Senha" />
+          <input id="setup-pass2" class="inp" type="password" placeholder="Confirmar senha" />
         </div>
-        <input id="setup-pass" class="inp" type="password" placeholder="Crie uma senha segura" />
       </div>
 
-      <p id="setup-error" class="text-red-400 text-sm hidden">Preencha todos os campos.</p>
+      <p id="setup-error" class="text-red-400 text-sm hidden">Verifique os campos.</p>
+      <button onclick="setupSave()" class="btn-primary w-full justify-center py-3">Configurar e Entrar →</button>
+    </div>
 
-      <button onclick="setupSave()" class="btn-primary w-full justify-center py-3">
-        Configurar e Entrar no CRM
+    <!-- Tab: Importar código -->
+    <div id="setup-panel-import" class="hidden card p-6 space-y-4">
+      <p class="text-sm text-slate-400 leading-relaxed">Cole abaixo o <strong class="text-white">código de acesso</strong> gerado pelo administrador do CRM.</p>
+      <textarea id="import-code" class="inp resize-none font-mono text-xs" rows="5" placeholder="Cole o código aqui..."></textarea>
+
+      <hr class="border-white/5" />
+
+      <div>
+        <label class="text-xs font-semibold text-slate-400 uppercase tracking-widest block mb-3">Criar sua conta</label>
+        <div class="space-y-3">
+          <input id="import-name"  class="inp" type="text"     placeholder="Seu nome completo" />
+          <input id="import-user"  class="inp" type="text"     placeholder="Nome de usuário" />
+          <input id="import-pass"  class="inp" type="password" placeholder="Sua senha" />
+        </div>
+      </div>
+
+      <p id="import-error" class="text-red-400 text-sm hidden">Código inválido ou campos incompletos.</p>
+      <button onclick="importConfig()" class="btn-primary w-full justify-center py-3">Importar e Entrar →</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TELA 2: LOGIN
+══════════════════════════════════════ -->
+<div id="screen-login" class="screen min-h-screen flex-col items-center justify-center p-4">
+  <div class="w-full max-w-sm fade-in">
+
+    <div class="text-center mb-8">
+      <button onclick="showScreen('screen-home')" class="text-slate-500 hover:text-slate-300 text-xs mb-6 flex items-center gap-1 mx-auto transition-colors">
+        ← Voltar
+      </button>
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-green-500/10 border border-green-500/20 text-2xl mb-4">🔐</div>
+      <h1 class="text-2xl font-black text-white mb-1">CRM · AUTOMATIZE</h1>
+      <p class="text-slate-400 text-sm">Acesse com suas credenciais</p>
+    </div>
+
+    <div class="card p-6 space-y-4">
+      <input id="login-user" class="inp" type="text"     placeholder="Usuário" autocomplete="username" />
+      <input id="login-pass" class="inp" type="password" placeholder="Senha"   autocomplete="current-password"
+             onkeydown="if(event.key==='Enter') doLogin()" />
+      <p id="login-error" class="text-red-400 text-sm hidden">Usuário ou senha incorretos.</p>
+      <button onclick="doLogin()" class="btn-primary w-full justify-center py-3">Entrar</button>
+      <button onclick="showScreen('screen-setup')" class="btn-secondary w-full justify-center text-xs text-slate-500 mt-1">
+        Configurar novo acesso
       </button>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
-     TELA 2: LOGIN
-════════════════════════════════════════ -->
-<div id="screen-login" class="screen min-h-screen flex items-center justify-center p-4">
-  <div class="w-full max-w-sm fade-in">
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-green-500/10 border border-green-500/20 text-3xl mb-4">🔐</div>
-      <h1 class="text-2xl font-black text-white mb-1">CRM · AUTOMATIZE</h1>
-      <p class="text-slate-400 text-sm">Digite sua senha para acessar</p>
-    </div>
-    <div class="card p-6 space-y-4">
-      <input id="login-pass" class="inp" type="password" placeholder="Sua senha" onkeydown="if(event.key==='Enter') doLogin()" />
-      <p id="login-error" class="text-red-400 text-sm hidden">Senha incorreta.</p>
-      <button onclick="doLogin()" class="btn-primary w-full justify-center py-3">Entrar</button>
-      <button onclick="showSetup()" class="btn-secondary w-full justify-center text-xs">Redefinir configurações</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════
+<!-- ══════════════════════════════════════
      TELA 3: APP PRINCIPAL
-════════════════════════════════════════ -->
+══════════════════════════════════════ -->
 <div id="screen-app" class="screen min-h-screen">
 
-  <!-- Mobile overlay -->
   <div id="mobile-overlay" class="hidden fixed inset-0 bg-black/50 z-40" onclick="closeSidebar()" style="display:none"></div>
 
   <!-- Sidebar -->
@@ -249,113 +338,92 @@ function doGet(e) {
     <nav class="flex-1 p-3 space-y-1 pt-4">
       <p class="text-xs font-semibold text-slate-600 uppercase tracking-widest px-2 mb-2">Menu</p>
       <div class="nav-item active" onclick="showView('dashboard', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         Dashboard
       </div>
       <div class="nav-item" onclick="showView('leads', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
         Leads
         <span id="nav-count" class="ml-auto bg-green-500/20 text-green-400 text-xs font-bold px-2 py-0.5 rounded-full"></span>
       </div>
       <div class="nav-item" onclick="showView('kanban', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 0v10m0-10a2 2 0 012 2h2a2 2 0 012-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 0v10m0-10a2 2 0 012 2h2a2 2 0 012-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
         Pipeline
+      </div>
+      <!-- Apenas admin vê usuários -->
+      <div id="nav-users" class="nav-item hidden" onclick="showView('users', this)">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        Usuários
       </div>
     </nav>
 
-    <div class="p-3 border-t border-white/5 space-y-2">
+    <div class="p-3 border-t border-white/5 space-y-1">
       <button onclick="syncLeads()" class="nav-item w-full text-left text-blue-400 hover:text-blue-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
         Sincronizar
       </button>
       <button onclick="exportCSV()" class="nav-item w-full text-left">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
         Exportar CSV
       </button>
       <button onclick="doLogout()" class="nav-item w-full text-left text-red-400 hover:text-red-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         Sair
       </button>
     </div>
   </aside>
 
-  <!-- Main content -->
+  <!-- Main -->
   <div class="flex-1 flex flex-col min-h-screen overflow-auto">
 
     <!-- Top bar -->
     <header class="sticky top-0 z-30 flex items-center justify-between px-5 py-3 border-b border-white/5 bg-[#0a0f1e]/90 backdrop-blur-md">
-      <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white p-1">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
-      <p id="view-title" class="font-bold text-white text-base">Dashboard</p>
-      <div class="flex items-center gap-2">
-        <span id="sync-status" class="text-xs text-slate-500"></span>
-        <div class="w-8 h-8 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center text-sm font-bold text-green-400">A</div>
+      <div class="flex items-center gap-3">
+        <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white p-1">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <p id="view-title" class="font-bold text-white text-base">Dashboard</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="sync-status" class="text-xs text-slate-500 hidden sm:block"></span>
+        <!-- User chip -->
+        <div class="flex items-center gap-2 bg-white/5 border border-white/8 rounded-full pl-1.5 pr-3 py-1 cursor-default">
+          <div id="user-avatar" class="w-6 h-6 rounded-full bg-green-500/30 border border-green-500/40 flex items-center justify-center text-xs font-bold text-green-300">A</div>
+          <span id="user-name-display" class="text-xs font-medium text-slate-300 max-w-[100px] truncate">Admin</span>
+          <span id="user-role-badge" class="badge badge-admin text-[10px] px-1.5 py-0.5">admin</span>
+        </div>
       </div>
     </header>
 
     <!-- ── VIEW: DASHBOARD ── -->
     <div id="view-dashboard" class="view active p-5 space-y-6">
-
-      <!-- KPI Row -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="kpi-card">
-          <p class="text-xs text-slate-500 font-semibold uppercase tracking-widest mb-1">Total Leads</p>
-          <p id="kpi-total" class="text-3xl font-black text-white">0</p>
-          <p class="text-xs text-slate-500 mt-1">cadastros</p>
-        </div>
-        <div class="kpi-card">
-          <p class="text-xs text-slate-500 font-semibold uppercase tracking-widest mb-1">Novos Hoje</p>
-          <p id="kpi-hoje" class="text-3xl font-black text-blue-400">0</p>
-          <p class="text-xs text-slate-500 mt-1">recebidos</p>
-        </div>
-        <div class="kpi-card">
-          <p class="text-xs text-slate-500 font-semibold uppercase tracking-widest mb-1">Em Negociação</p>
-          <p id="kpi-negociacao" class="text-3xl font-black text-purple-400">0</p>
-          <p class="text-xs text-slate-500 mt-1">propostas</p>
-        </div>
-        <div class="kpi-card">
-          <p class="text-xs text-slate-500 font-semibold uppercase tracking-widest mb-1">Aprovados</p>
-          <p id="kpi-aprovados" class="text-3xl font-black text-green-400">0</p>
-          <p class="text-xs text-slate-500 mt-1">convertidos</p>
-        </div>
+        <div class="kpi-card"><p class="text-xs text-slate-500 font-semibold uppercase tracking-widest mb-1">Total Leads</p><p id="kpi-total" class="text-3xl font-black text-white">0</p><p class="text-xs text-slate-500 mt-1">cadastros</p></div>
+        <div class="kpi-card"><p class="text-xs text-slate-500 font-semibold uppercase tracking-widest mb-1">Novos Hoje</p><p id="kpi-hoje" class="text-3xl font-black text-blue-400">0</p><p class="text-xs text-slate-500 mt-1">recebidos</p></div>
+        <div class="kpi-card"><p class="text-xs text-slate-500 font-semibold uppercase tracking-widest mb-1">Em Negociação</p><p id="kpi-negociacao" class="text-3xl font-black text-purple-400">0</p><p class="text-xs text-slate-500 mt-1">propostas</p></div>
+        <div class="kpi-card"><p class="text-xs text-slate-500 font-semibold uppercase tracking-widest mb-1">Aprovados</p><p id="kpi-aprovados" class="text-3xl font-black text-green-400">0</p><p class="text-xs text-slate-500 mt-1">convertidos</p></div>
       </div>
-
-      <!-- Charts row -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="card p-5">
-          <p class="font-semibold text-white text-sm mb-4">Pipeline por Status</p>
-          <div class="relative h-48"><canvas id="chart-status"></canvas></div>
-        </div>
-        <div class="card p-5">
-          <p class="font-semibold text-white text-sm mb-4">Leads por Faixa de Renda</p>
-          <div class="relative h-48"><canvas id="chart-renda"></canvas></div>
-        </div>
+        <div class="card p-5"><p class="font-semibold text-white text-sm mb-4">Pipeline por Status</p><div class="relative h-48"><canvas id="chart-status"></canvas></div></div>
+        <div class="card p-5"><p class="font-semibold text-white text-sm mb-4">Leads por Faixa de Renda</p><div class="relative h-48"><canvas id="chart-renda"></canvas></div></div>
       </div>
-
-      <!-- Recent leads -->
       <div class="card">
         <div class="flex items-center justify-between p-4 border-b border-white/5">
           <p class="font-semibold text-white text-sm">Últimos Leads Recebidos</p>
           <button onclick="showView('leads', document.querySelector('[onclick*=leads]'))" class="text-xs text-green-400 hover:text-green-300 font-medium">Ver todos →</button>
         </div>
-        <div id="recent-leads" class="overflow-x-auto">
-          <table class="lead-table">
-            <thead><tr>
-              <th>Nome</th><th>WhatsApp</th><th>Status</th><th>Data</th>
-            </tr></thead>
-            <tbody id="recent-body"></tbody>
-          </table>
+        <div class="overflow-x-auto">
+          <table class="lead-table"><thead><tr><th>Nome</th><th>WhatsApp</th><th>Status</th><th>Data</th></tr></thead>
+          <tbody id="recent-body"></tbody></table>
         </div>
       </div>
     </div>
 
     <!-- ── VIEW: LEADS ── -->
     <div id="view-leads" class="view p-5 space-y-4">
-      <!-- Filtros -->
       <div class="flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           <input id="search-input" class="inp pl-9" type="text" placeholder="Buscar por nome, e-mail ou WhatsApp..." oninput="renderLeads()" />
         </div>
         <select id="filter-status" class="inp" style="width:auto;min-width:150px" onchange="renderLeads()">
@@ -367,19 +435,9 @@ function doGet(e) {
           <option value="perdido">Perdido</option>
         </select>
       </div>
-
-      <!-- Tabela -->
       <div class="card overflow-x-auto">
         <table class="lead-table">
-          <thead><tr>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>WhatsApp</th>
-            <th>Renda</th>
-            <th>Score</th>
-            <th>Status</th>
-            <th>Data</th>
-          </tr></thead>
+          <thead><tr><th>Nome</th><th>E-mail</th><th>WhatsApp</th><th>Renda</th><th>Score</th><th>Status</th><th>Data</th></tr></thead>
           <tbody id="leads-body"></tbody>
         </table>
         <div id="leads-empty" class="hidden text-center py-16 text-slate-500">
@@ -392,17 +450,69 @@ function doGet(e) {
 
     <!-- ── VIEW: KANBAN ── -->
     <div id="view-kanban" class="view p-5">
-      <div id="kanban-board" class="flex gap-4 overflow-x-auto pb-4">
-        <!-- Colunas geradas via JS -->
+      <div id="kanban-board" class="flex gap-4 overflow-x-auto pb-4"></div>
+    </div>
+
+    <!-- ── VIEW: USUÁRIOS (admin only) ── -->
+    <div id="view-users" class="view p-5 space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-white">Gerenciar Usuários</h2>
+          <p class="text-sm text-slate-500 mt-0.5">Gerencie quem tem acesso ao CRM</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="copyAccessCode()" class="btn-secondary text-sm">
+            📤 Exportar código de acesso
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de usuários -->
+      <div class="card">
+        <div class="p-4 border-b border-white/5 flex items-center justify-between">
+          <p class="font-semibold text-white text-sm">Usuários cadastrados</p>
+          <button onclick="toggleAddUser()" class="btn-primary text-xs py-1.5 px-3">+ Adicionar</button>
+        </div>
+
+        <!-- Form adicionar -->
+        <div id="add-user-form" class="hidden p-4 border-b border-white/5 bg-white/2">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Novo usuário</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <input id="new-user-name"  class="inp text-sm" type="text"     placeholder="Nome completo" />
+            <input id="new-user-login" class="inp text-sm" type="text"     placeholder="Nome de usuário" autocomplete="off" />
+            <input id="new-user-pass"  class="inp text-sm" type="password" placeholder="Senha" />
+            <select id="new-user-role" class="inp text-sm">
+              <option value="viewer">Visualizador</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="addUser()" class="btn-primary text-sm py-2">Salvar usuário</button>
+            <button onclick="toggleAddUser()" class="btn-secondary text-sm py-2">Cancelar</button>
+          </div>
+        </div>
+
+        <div id="users-list" class="divide-y divide-white/5"></div>
+      </div>
+
+      <!-- Info de compartilhamento -->
+      <div class="card p-5 border-green-500/20 bg-green-500/5">
+        <p class="font-semibold text-green-400 text-sm mb-2">📋 Como compartilhar acesso</p>
+        <ol class="text-sm text-slate-400 space-y-1.5 list-decimal list-inside">
+          <li>Clique em <strong class="text-white">Exportar código de acesso</strong> — o código será copiado.</li>
+          <li>Envie o código para o novo usuário (WhatsApp, e-mail etc.).</li>
+          <li>O novo usuário acessa o CRM → <em>Configurar novo acesso</em> → aba <em>Importar código</em>.</li>
+          <li>Cola o código, cria seu usuário e senha, e entra.</li>
+        </ol>
       </div>
     </div>
 
   </div><!-- /main -->
 </div><!-- /screen-app -->
 
-<!-- ════════════════════════════════════════
+<!-- ══════════════════════════════════════
      MODAL: DETALHE DO LEAD
-════════════════════════════════════════ -->
+══════════════════════════════════════ -->
 <div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal-box" onclick="event.stopPropagation()">
     <div class="p-5 border-b border-white/5 flex items-start justify-between">
@@ -411,12 +521,10 @@ function doGet(e) {
         <p id="modal-data" class="text-xs text-slate-500 mt-0.5"></p>
       </div>
       <button onclick="closeModal()" class="text-slate-500 hover:text-white p-1 transition-colors ml-4 flex-shrink-0">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
-
     <div class="p-5 space-y-5">
-      <!-- Contato -->
       <div>
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-3">Contato</p>
         <div class="grid grid-cols-1 gap-2">
@@ -430,14 +538,10 @@ function doGet(e) {
           </div>
         </div>
       </div>
-
-      <!-- Respostas do Quiz -->
       <div>
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-3">Diagnóstico Respondido</p>
         <div id="modal-answers" class="grid grid-cols-2 gap-2"></div>
       </div>
-
-      <!-- Status -->
       <div>
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Status no Pipeline</p>
         <select id="modal-status" class="inp" onchange="updateLeadStatus(this.value)">
@@ -448,46 +552,31 @@ function doGet(e) {
           <option value="perdido">🔴 Perdido</option>
         </select>
       </div>
-
-      <!-- Anotações -->
       <div>
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Anotações</p>
-        <textarea id="modal-notes" class="inp resize-none" rows="3" placeholder="Digite observações sobre este lead..." oninput="updateLeadNotes(this.value)"></textarea>
+        <textarea id="modal-notes" class="inp resize-none" rows="3" placeholder="Digite observações..." oninput="updateLeadNotes(this.value)"></textarea>
       </div>
-
-      <!-- Ações rápidas -->
       <div class="flex gap-2 flex-wrap">
-        <a id="btn-wpp" href="#" target="_blank" class="btn-primary text-sm py-2 px-4">
-          💬 WhatsApp
-        </a>
-        <a id="btn-email-link" href="#" class="btn-secondary text-sm">
-          📧 E-mail
-        </a>
+        <a id="btn-wpp"        href="#" target="_blank" class="btn-primary text-sm py-2 px-4">💬 WhatsApp</a>
+        <a id="btn-email-link" href="#"                 class="btn-secondary text-sm">📧 E-mail</a>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
-     TOAST
-════════════════════════════════════════ -->
+<!-- TOAST -->
 <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[200] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none">
   <div id="toast-inner" class="bg-slate-800 border border-white/10 text-white text-sm font-medium px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2"></div>
 </div>
 
-<!-- ════════════════════════════════════════
+<!-- ══════════════════════════════════════
      JAVASCRIPT
-════════════════════════════════════════ -->
+══════════════════════════════════════ -->
 <script>
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 // ESTADO
-// ────────────────────────────────────────
-let STATE = {
-  leads: [],          // leads carregados
-  crm: {},            // {leadId: {status, notes}}
-  selectedLead: null,
-  charts: {}
-};
+// ─────────────────────────────────────
+let STATE = { leads: [], crm: {}, selectedLead: null, charts: {}, currentUser: null };
 
 const STATUSES = {
   novo:      { label: 'Novo',             color: '#60a5fa' },
@@ -504,74 +593,50 @@ const RENDA_LABEL = {
   acima_7000:  'Acima R$ 7k',
 };
 
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 // STORAGE
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 const LS = {
   get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
-  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+  set: (k,v) => localStorage.setItem(k, JSON.stringify(v)),
   del: k => localStorage.removeItem(k),
 };
 
-function saveConfig(url, pass) {
-  LS.set('crm_config', { api_url: url, password: btoa(pass) });
-}
-function getConfig() { return LS.get('crm_config') || {}; }
-function saveCRM()   { LS.set('crm_data', STATE.crm); }
-function loadCRM()   { STATE.crm = LS.get('crm_data') || {}; }
-function saveLeadsCache(leads) { LS.set('crm_leads_cache', leads); }
-function loadLeadsCache()      { return LS.get('crm_leads_cache') || []; }
+function getConfig()  { return LS.get('crm_config')  || {}; }
+function saveConfig(c){ LS.set('crm_config', c); }
+function getSession() { return LS.get('crm_session'); }
+function setSession(s){ LS.set('crm_session', s); }
+function clearSession(){ LS.del('crm_session'); }
+function saveCRM()    { LS.set('crm_data', STATE.crm); }
+function loadCRM()    { STATE.crm = LS.get('crm_data') || {}; }
+function saveLeadsCache(l){ LS.set('crm_leads_cache', l); }
+function loadLeadsCache() { return LS.get('crm_leads_cache') || []; }
 
-// ────────────────────────────────────────
-// AUTH
-// ────────────────────────────────────────
-function setupSave() {
-  const url  = document.getElementById('setup-api').value.trim();
-  const pass = document.getElementById('setup-pass').value.trim();
-  if (!url || !pass) {
-    document.getElementById('setup-error').classList.remove('hidden');
-    return;
-  }
-  saveConfig(url, pass);
-  LS.set('crm_session', '1');
-  initApp();
-  showScreen('screen-app');
-}
-
-function doLogin() {
-  const pass   = document.getElementById('login-pass').value;
-  const cfg    = getConfig();
-  const stored = cfg.password;
-  if (!stored || btoa(pass) !== stored) {
-    document.getElementById('login-error').classList.remove('hidden');
-    return;
-  }
-  LS.set('crm_session', '1');
-  initApp();
-  showScreen('screen-app');
-}
-
-function doLogout() {
-  LS.del('crm_session');
-  showScreen('screen-login');
-  document.getElementById('login-pass').value = '';
-  document.getElementById('login-error').classList.add('hidden');
-}
-
-function showSetup() {
-  LS.del('crm_config');
-  LS.del('crm_session');
-  showScreen('screen-setup');
-}
-
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 // BOOT
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 function boot() {
   const cfg     = getConfig();
-  const session = LS.get('crm_session');
-  if (!cfg.api_url) { showScreen('screen-setup'); return; }
-  if (session)      { initApp(); showScreen('screen-app'); return; }
+  const session = getSession();
+
+  if (!cfg.api_url || !cfg.users?.length) {
+    showScreen('screen-home');
+    return;
+  }
+
+  if (session?.uid) {
+    const user = cfg.users.find(u => u.id === session.uid);
+    if (user) { STATE.currentUser = user; initApp(); showScreen('screen-app'); return; }
+  }
+
+  showScreen('screen-home');
+}
+
+function goToLogin() {
+  const cfg = getConfig();
+  if (!cfg.api_url || !cfg.users?.length) { showScreen('screen-setup'); return; }
+  clearFields('login-user','login-pass');
+  document.getElementById('login-error').classList.add('hidden');
   showScreen('screen-login');
 }
 
@@ -580,25 +645,217 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
-// ────────────────────────────────────────
+// ─────────────────────────────────────
+// AUTH — SETUP
+// ─────────────────────────────────────
+function setupTab(tab) {
+  const isNew = tab === 'new';
+  document.getElementById('tab-new').classList.toggle('active', isNew);
+  document.getElementById('tab-import').classList.toggle('active', !isNew);
+  document.getElementById('setup-panel-new').classList.toggle('hidden', !isNew);
+  document.getElementById('setup-panel-import').classList.toggle('hidden', isNew);
+}
+
+function setupSave() {
+  const url   = v('setup-api');
+  const name  = v('setup-name');
+  const uname = v('setup-user').toLowerCase();
+  const pass  = v('setup-pass');
+  const pass2 = v('setup-pass2');
+  const err   = document.getElementById('setup-error');
+
+  if (!url || !name || !uname || !pass) { err.textContent = 'Preencha todos os campos.'; err.classList.remove('hidden'); return; }
+  if (pass !== pass2) { err.textContent = 'As senhas não coincidem.'; err.classList.remove('hidden'); return; }
+  if (!url.startsWith('https://script.google.com')) { err.textContent = 'URL inválida. Use a URL do Apps Script.'; err.classList.remove('hidden'); return; }
+
+  err.classList.add('hidden');
+
+  const adminUser = { id: uid(), name, username: uname, password: btoa(pass), role: 'admin' };
+  const cfg = { api_url: url, users: [adminUser] };
+  saveConfig(cfg);
+  setSession({ uid: adminUser.id });
+  STATE.currentUser = adminUser;
+  initApp();
+  showScreen('screen-app');
+  toast('✅ CRM configurado com sucesso!');
+}
+
+function importConfig() {
+  const code  = v('import-code');
+  const name  = v('import-name');
+  const uname = v('import-user').toLowerCase();
+  const pass  = v('import-pass');
+  const err   = document.getElementById('import-error');
+
+  try {
+    const decoded = JSON.parse(atob(code));
+    if (!decoded.api_url || !decoded.invite_token) throw new Error('inválido');
+    if (!name || !uname || !pass) throw new Error('campos');
+
+    // Carrega config existente (pode já existir neste device) ou cria nova
+    let cfg = getConfig();
+    if (cfg.api_url && cfg.api_url !== decoded.api_url) {
+      // CRM diferente, sobrescreve
+      cfg = { api_url: decoded.api_url, users: [] };
+    }
+    if (!cfg.api_url) cfg = { api_url: decoded.api_url, users: [] };
+
+    // Verifica se username já existe
+    if ((cfg.users || []).find(u => u.username === uname)) {
+      err.textContent = 'Este nome de usuário já existe.';
+      err.classList.remove('hidden'); return;
+    }
+
+    const newUser = { id: uid(), name, username: uname, password: btoa(pass), role: 'viewer' };
+    cfg.users = [...(cfg.users || []), newUser];
+    saveConfig(cfg);
+    setSession({ uid: newUser.id });
+    STATE.currentUser = newUser;
+    err.classList.add('hidden');
+    initApp();
+    showScreen('screen-app');
+    toast('✅ Acesso configurado!');
+  } catch {
+    err.textContent = 'Código inválido ou campos incompletos.';
+    err.classList.remove('hidden');
+  }
+}
+
+// ─────────────────────────────────────
+// AUTH — LOGIN
+// ─────────────────────────────────────
+function doLogin() {
+  const uname = v('login-user').toLowerCase();
+  const pass  = v('login-pass');
+  const cfg   = getConfig();
+  const err   = document.getElementById('login-error');
+
+  const user = (cfg.users || []).find(u => u.username === uname && u.password === btoa(pass));
+  if (!user) { err.classList.remove('hidden'); return; }
+
+  err.classList.add('hidden');
+  setSession({ uid: user.id });
+  STATE.currentUser = user;
+  initApp();
+  showScreen('screen-app');
+}
+
+function doLogout() {
+  clearSession();
+  STATE.currentUser = null;
+  showScreen('screen-home');
+}
+
+// ─────────────────────────────────────
 // INIT APP
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 function initApp() {
   loadCRM();
   STATE.leads = loadLeadsCache();
+
+  // Atualiza header com dados do usuário
+  const u = STATE.currentUser;
+  document.getElementById('user-avatar').textContent        = (u?.name || 'U')[0].toUpperCase();
+  document.getElementById('user-name-display').textContent  = u?.name || 'Usuário';
+  document.getElementById('user-role-badge').textContent    = u?.role === 'admin' ? 'admin' : 'viewer';
+  document.getElementById('user-role-badge').className      = 'badge ' + (u?.role === 'admin' ? 'badge-admin' : 'badge-viewer');
+
+  // Mostra menu de usuários apenas para admin
+  document.getElementById('nav-users').classList.toggle('hidden', u?.role !== 'admin');
+
   updateNavCount();
   renderDashboard();
   renderLeads();
   renderKanban();
-  document.getElementById('sync-status').textContent =
-    STATE.leads.length ? `${STATE.leads.length} leads em cache` : 'Sem dados — sincronize';
-  // Sincroniza automaticamente ao abrir
+
+  const status = document.getElementById('sync-status');
+  status.textContent = STATE.leads.length ? `${STATE.leads.length} leads em cache` : 'Sem dados — sincronize';
   syncLeads(true);
 }
 
-// ────────────────────────────────────────
-// SINCRONIZAÇÃO COM GOOGLE SHEETS
-// ────────────────────────────────────────
+// ─────────────────────────────────────
+// GERENCIAR USUÁRIOS
+// ─────────────────────────────────────
+function renderUsersList() {
+  const cfg  = getConfig();
+  const me   = STATE.currentUser;
+  const list = document.getElementById('users-list');
+
+  if (!cfg.users?.length) {
+    list.innerHTML = '<p class="text-center text-slate-500 py-6 text-sm">Nenhum usuário cadastrado.</p>';
+    return;
+  }
+
+  list.innerHTML = cfg.users.map(u => `
+    <div class="flex items-center justify-between px-4 py-3">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-slate-700 border border-white/10 flex items-center justify-center text-sm font-bold text-slate-300">
+          ${u.name[0].toUpperCase()}
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-white">${u.name}</p>
+          <p class="text-xs text-slate-500">@${u.username}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="badge ${u.role === 'admin' ? 'badge-admin' : 'badge-viewer'}">${u.role === 'admin' ? 'Admin' : 'Viewer'}</span>
+        ${u.id !== me?.id ? `<button onclick="removeUser('${u.id}')" class="btn-danger text-xs py-1 px-2">✕</button>` : '<span class="text-xs text-slate-600 px-2">você</span>'}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleAddUser() {
+  const f = document.getElementById('add-user-form');
+  f.classList.toggle('hidden');
+  if (!f.classList.contains('hidden')) {
+    clearFields('new-user-name','new-user-login','new-user-pass');
+    document.getElementById('new-user-role').value = 'viewer';
+  }
+}
+
+function addUser() {
+  const name  = v('new-user-name');
+  const uname = v('new-user-login').toLowerCase();
+  const pass  = v('new-user-pass');
+  const role  = document.getElementById('new-user-role').value;
+
+  if (!name || !uname || !pass) { toast('⚠️ Preencha todos os campos do novo usuário'); return; }
+
+  const cfg = getConfig();
+  if (cfg.users.find(u => u.username === uname)) { toast('⚠️ Nome de usuário já existe'); return; }
+
+  cfg.users.push({ id: uid(), name, username: uname, password: btoa(pass), role });
+  saveConfig(cfg);
+  toggleAddUser();
+  renderUsersList();
+  toast(`✅ Usuário @${uname} criado com sucesso!`);
+}
+
+function removeUser(userId) {
+  if (!confirm('Remover este usuário?')) return;
+  const cfg = getConfig();
+  cfg.users = cfg.users.filter(u => u.id !== userId);
+  saveConfig(cfg);
+  renderUsersList();
+  toast('✅ Usuário removido');
+}
+
+function copyAccessCode() {
+  const cfg = getConfig();
+  // O código exportado contém apenas a api_url e um token de convite (sem senhas)
+  const payload = { api_url: cfg.api_url, invite_token: btoa(cfg.api_url + ':automatize') };
+  const code = btoa(JSON.stringify(payload));
+  navigator.clipboard.writeText(code).then(() => {
+    toast('✅ Código copiado! Envie para o novo usuário.');
+  }).catch(() => {
+    prompt('Copie o código abaixo:', code);
+  });
+}
+
+// ─────────────────────────────────────
+// SINCRONIZAÇÃO
+// ─────────────────────────────────────
 async function syncLeads(silent = false) {
   const cfg = getConfig();
   if (!cfg.api_url) return;
@@ -609,62 +866,54 @@ async function syncLeads(silent = false) {
     const json = await res.json();
 
     if (json.status === 'ok' && Array.isArray(json.leads)) {
-      // Normaliza os leads (garante que há um ID único)
       STATE.leads = json.leads.map((row, i) => normalizeRow(row, i));
       saveLeadsCache(STATE.leads);
       updateNavCount();
       renderDashboard();
       renderLeads();
       renderKanban();
-      const now = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+      const now = new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
       document.getElementById('sync-status').textContent = `Atualizado às ${now}`;
       if (!silent) toast(`✅ ${STATE.leads.length} leads sincronizados`);
     } else {
       if (!silent) toast('⚠️ Resposta inesperada do servidor');
     }
   } catch (err) {
-    console.warn('Sync error:', err);
     if (!silent) toast('❌ Erro ao sincronizar. Verifique a URL do Apps Script.');
   }
 }
 
-// Mapeia uma linha do Sheets para o modelo do CRM
 function normalizeRow(row, idx) {
-  // Suporta tanto Raio-X Lojistas quanto Diagnóstico de Crédito
   const id = String(row['_row'] || row['Data'] || idx);
   return {
     _id:       id,
-    data:      row['Data']       || row['data']      || row['timestamp'] || '',
-    nome:      row['Nome']       || row['nome']       || row['lead.nome'] || '',
-    email:     row['Email']      || row['email']      || '',
-    whatsapp:  row['WhatsApp']   || row['whatsapp']   || '',
-    renda:     row['Renda']      || row['renda']      || row['Renda mensal'] || '',
-    score:     row['Score']      || row['score']      || row['Nota de crédito'] || '',
-    nome_sujo: row['Nome Sujo']  || row['nome_sujo']  || '',
-    raw:       row,
+    data:      row['Data']      || row['data']      || row['timestamp'] || '',
+    nome:      row['Nome']      || row['nome']       || '',
+    email:     row['Email']     || row['email']      || '',
+    whatsapp:  row['WhatsApp']  || row['whatsapp']   || '',
+    renda:     row['Renda']     || row['renda']      || '',
+    score:     row['Score']     || row['score']      || '',
+    nome_sujo: row['Nome Sujo'] || row['nome_sujo']  || '',
+    raw: row,
   };
 }
 
-// Merge com dados do CRM (status, notes)
 function enrichLead(lead) {
   const crm = STATE.crm[lead._id] || {};
-  return {
-    ...lead,
-    status: crm.status || 'novo',
-    notes:  crm.notes  || '',
-  };
+  return { ...lead, status: crm.status || 'novo', notes: crm.notes || '' };
 }
 
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 // NAVEGAÇÃO
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 function showView(name, el) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('view-' + name).classList.add('active');
   if (el) el.classList.add('active');
-  const titles = { dashboard: 'Dashboard', leads: 'Leads', kanban: 'Pipeline Kanban' };
+  const titles = { dashboard:'Dashboard', leads:'Leads', kanban:'Pipeline Kanban', users:'Usuários' };
   document.getElementById('view-title').textContent = titles[name] || name;
+  if (name === 'users') renderUsersList();
   closeSidebar();
 }
 
@@ -678,23 +927,18 @@ function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('mobile-overlay').style.display = 'none';
 }
+function updateNavCount() { document.getElementById('nav-count').textContent = STATE.leads.length || ''; }
 
-function updateNavCount() {
-  document.getElementById('nav-count').textContent = STATE.leads.length || '';
-}
-
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 // DASHBOARD
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 function renderDashboard() {
   const enriched = STATE.leads.map(enrichLead);
   const today    = new Date().toLocaleDateString('pt-BR');
-
   document.getElementById('kpi-total').textContent      = enriched.length;
-  document.getElementById('kpi-hoje').textContent       = enriched.filter(l => String(l.data).includes(today.split('/')[0])).length;
+  document.getElementById('kpi-hoje').textContent       = enriched.filter(l => String(l.data).startsWith(today.split('/')[2])).length;
   document.getElementById('kpi-negociacao').textContent = enriched.filter(l => l.status === 'proposta').length;
   document.getElementById('kpi-aprovados').textContent  = enriched.filter(l => l.status === 'aprovado').length;
-
   buildStatusChart(enriched);
   buildRendaChart(enriched);
   renderRecentLeads(enriched.slice(-6).reverse());
@@ -704,178 +948,116 @@ function buildStatusChart(leads) {
   const counts = {};
   Object.keys(STATUSES).forEach(s => counts[s] = 0);
   leads.forEach(l => { if (counts[l.status] !== undefined) counts[l.status]++; });
-
   const ctx = document.getElementById('chart-status');
   if (STATE.charts.status) STATE.charts.status.destroy();
   STATE.charts.status = new Chart(ctx, {
     type: 'doughnut',
-    data: {
-      labels: Object.values(STATUSES).map(s => s.label),
-      datasets: [{ data: Object.values(counts), backgroundColor: Object.values(STATUSES).map(s => s.color + '99'), borderColor: Object.values(STATUSES).map(s => s.color), borderWidth: 1.5 }]
-    },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11, family: 'Inter' }, padding: 12, boxWidth: 10 } } }, cutout: '65%' }
+    data: { labels: Object.values(STATUSES).map(s => s.label), datasets: [{ data: Object.values(counts), backgroundColor: Object.values(STATUSES).map(s => s.color+'99'), borderColor: Object.values(STATUSES).map(s => s.color), borderWidth: 1.5 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ color:'#94a3b8', font:{size:11,family:'Inter'}, padding:12, boxWidth:10 } } }, cutout:'65%' }
   });
 }
 
 function buildRendaChart(leads) {
   const map = {};
-  leads.forEach(l => {
-    const r = l.renda || 'Não informado';
-    const label = RENDA_LABEL[r] || r || 'Não informado';
-    map[label] = (map[label] || 0) + 1;
-  });
-
+  leads.forEach(l => { const label = RENDA_LABEL[l.renda] || l.renda || 'Não informado'; map[label] = (map[label]||0)+1; });
   const ctx = document.getElementById('chart-renda');
   if (STATE.charts.renda) STATE.charts.renda.destroy();
   STATE.charts.renda = new Chart(ctx, {
     type: 'bar',
-    data: {
-      labels: Object.keys(map),
-      datasets: [{ data: Object.values(map), backgroundColor: '#22c55e55', borderColor: '#22c55e', borderWidth: 1.5, borderRadius: 6 }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,.04)' } },
-        y: { ticks: { color: '#64748b', font: { size: 10 }, stepSize: 1 }, grid: { color: 'rgba(255,255,255,.04)' } }
-      }
-    }
+    data: { labels: Object.keys(map), datasets: [{ data: Object.values(map), backgroundColor:'#22c55e55', borderColor:'#22c55e', borderWidth:1.5, borderRadius:6 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}}, y:{ticks:{color:'#64748b',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,.04)'}} } }
   });
 }
 
 function renderRecentLeads(leads) {
   const tbody = document.getElementById('recent-body');
-  if (!leads.length) { tbody.innerHTML = `<tr><td colspan="4" class="text-center text-slate-500 py-8">Sem leads. Sincronize os dados.</td></tr>`; return; }
-  tbody.innerHTML = leads.map(l => `
+  if (!leads.length) { tbody.innerHTML=`<tr><td colspan="4" class="text-center text-slate-500 py-8">Sem leads. Sincronize os dados.</td></tr>`; return; }
+  tbody.innerHTML = leads.map(l=>`
     <tr onclick="openModal('${l._id}')">
-      <td><span class="font-medium text-white">${l.nome || '—'}</span></td>
-      <td class="text-slate-400">${l.whatsapp || '—'}</td>
-      <td><span class="badge badge-${l.status}">${STATUSES[l.status]?.label || l.status}</span></td>
+      <td><span class="font-medium text-white">${l.nome||'—'}</span></td>
+      <td class="text-slate-400">${l.whatsapp||'—'}</td>
+      <td><span class="badge badge-${l.status}">${STATUSES[l.status]?.label||l.status}</span></td>
       <td class="text-slate-500 text-xs">${formatDate(l.data)}</td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 // LEADS TABLE
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 function renderLeads() {
-  const search = (document.getElementById('search-input')?.value || '').toLowerCase();
-  const status = document.getElementById('filter-status')?.value || 'all';
-
+  const search = (document.getElementById('search-input')?.value||'').toLowerCase();
+  const status = document.getElementById('filter-status')?.value||'all';
   let filtered = STATE.leads.map(enrichLead).filter(l => {
-    const matchSearch = !search ||
-      (l.nome  || '').toLowerCase().includes(search) ||
-      (l.email || '').toLowerCase().includes(search) ||
-      (l.whatsapp || '').includes(search);
-    const matchStatus = status === 'all' || l.status === status;
-    return matchSearch && matchStatus;
+    const ms = !search || (l.nome||'').toLowerCase().includes(search) || (l.email||'').toLowerCase().includes(search) || (l.whatsapp||'').includes(search);
+    const mst = status==='all' || l.status===status;
+    return ms && mst;
   });
-
   const tbody = document.getElementById('leads-body');
   const empty = document.getElementById('leads-empty');
-
-  if (!filtered.length) {
-    tbody.innerHTML = '';
-    empty.classList.remove('hidden');
-    return;
-  }
+  if (!filtered.length) { tbody.innerHTML=''; empty.classList.remove('hidden'); return; }
   empty.classList.add('hidden');
-
-  tbody.innerHTML = filtered.map(l => `
+  tbody.innerHTML = filtered.map(l=>`
     <tr onclick="openModal('${l._id}')">
-      <td><span class="font-semibold text-white">${l.nome || '—'}</span></td>
-      <td class="text-slate-400 text-xs">${l.email || '—'}</td>
-      <td>
-        <a href="https://wa.me/55${(l.whatsapp||'').replace(/\D/g,'')}" target="_blank" onclick="event.stopPropagation()" class="text-green-400 hover:underline text-sm">${l.whatsapp || '—'}</a>
-      </td>
-      <td class="text-slate-300 text-xs">${RENDA_LABEL[l.renda] || l.renda || '—'}</td>
-      <td class="text-slate-300 text-xs">${l.score || '—'}</td>
-      <td><span class="badge badge-${l.status}">${STATUSES[l.status]?.label || l.status}</span></td>
+      <td><span class="font-semibold text-white">${l.nome||'—'}</span></td>
+      <td class="text-slate-400 text-xs">${l.email||'—'}</td>
+      <td><a href="https://wa.me/55${(l.whatsapp||'').replace(/\D/g,'')}" target="_blank" onclick="event.stopPropagation()" class="text-green-400 hover:underline text-sm">${l.whatsapp||'—'}</a></td>
+      <td class="text-slate-300 text-xs">${RENDA_LABEL[l.renda]||l.renda||'—'}</td>
+      <td class="text-slate-300 text-xs">${l.score||'—'}</td>
+      <td><span class="badge badge-${l.status}">${STATUSES[l.status]?.label||l.status}</span></td>
       <td class="text-slate-500 text-xs whitespace-nowrap">${formatDate(l.data)}</td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 // KANBAN
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 function renderKanban() {
   const board    = document.getElementById('kanban-board');
   const enriched = STATE.leads.map(enrichLead);
-  const cols     = Object.entries(STATUSES);
-
-  board.innerHTML = cols.map(([key, s]) => {
-    const items = enriched.filter(l => l.status === key);
+  board.innerHTML = Object.entries(STATUSES).map(([key,s]) => {
+    const items = enriched.filter(l => l.status===key);
     const cards = items.length
-      ? items.map(l => `
-          <div class="kanban-card" onclick="openModal('${l._id}')">
-            <p class="font-semibold text-white text-sm mb-1 truncate">${l.nome || '—'}</p>
-            <p class="text-xs text-slate-400 mb-2">${l.whatsapp || l.email || '—'}</p>
-            <p class="text-xs text-slate-500">${formatDate(l.data)}</p>
-          </div>
-        `).join('')
+      ? items.map(l=>`<div class="kanban-card" onclick="openModal('${l._id}')"><p class="font-semibold text-white text-sm mb-1 truncate">${l.nome||'—'}</p><p class="text-xs text-slate-400 mb-2">${l.whatsapp||l.email||'—'}</p><p class="text-xs text-slate-500">${formatDate(l.data)}</p></div>`).join('')
       : `<p class="text-center text-slate-600 text-xs py-6 px-4">Nenhum lead aqui</p>`;
-
-    return `
-      <div class="kanban-col" style="min-height:300px">
-        <div class="flex items-center justify-between p-3 border-b border-white/5">
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full" style="background:${s.color}"></span>
-            <span class="text-xs font-bold text-slate-300">${s.label}</span>
-          </div>
-          <span class="text-xs font-bold text-slate-500">${items.length}</span>
-        </div>
-        <div>${cards}</div>
-      </div>
-    `;
+    return `<div class="kanban-col" style="min-height:300px"><div class="flex items-center justify-between p-3 border-b border-white/5"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full" style="background:${s.color}"></span><span class="text-xs font-bold text-slate-300">${s.label}</span></div><span class="text-xs font-bold text-slate-500">${items.length}</span></div><div>${cards}</div></div>`;
   }).join('');
 }
 
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 // MODAL DE LEAD
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 function openModal(id) {
-  const lead = STATE.leads.find(l => l._id === id);
+  const lead = STATE.leads.find(l => l._id===id);
   if (!lead) return;
-  const enriched = enrichLead(lead);
-  STATE.selectedLead = enriched;
+  const e = enrichLead(lead);
+  STATE.selectedLead = e;
 
-  document.getElementById('modal-nome').textContent = enriched.nome || '—';
-  document.getElementById('modal-data').textContent = 'Recebido em ' + formatDate(enriched.data);
+  document.getElementById('modal-nome').textContent = e.nome||'—';
+  document.getElementById('modal-data').textContent = 'Recebido em ' + formatDate(e.data);
 
   const emailEl = document.getElementById('modal-email');
-  emailEl.textContent = enriched.email || '—';
-  emailEl.href = 'mailto:' + (enriched.email || '');
+  emailEl.textContent = e.email||'—';
+  emailEl.href = 'mailto:'+(e.email||'');
 
-  const phone = (enriched.whatsapp || '').replace(/\D/g, '');
-  document.getElementById('modal-whatsapp').href = `https://wa.me/55${phone}`;
-  document.getElementById('btn-wpp').href = `https://wa.me/55${phone}?text=Olá%20${encodeURIComponent(enriched.nome || '')},%20vi%20que%20você%20fez%20um%20diagnóstico%20de%20crédito%20conosco.%20Posso%20te%20ajudar%20a%20buscar%20sua%20aprovação!`;
-  document.getElementById('btn-email-link').href = 'mailto:' + (enriched.email || '');
+  const phone = (e.whatsapp||'').replace(/\D/g,'');
+  document.getElementById('modal-whatsapp').href  = `https://wa.me/55${phone}`;
+  document.getElementById('btn-wpp').href         = `https://wa.me/55${phone}?text=Ol%C3%A1%20${encodeURIComponent(e.nome||'')},%20vi%20que%20voc%C3%AA%20fez%20um%20diagn%C3%B3stico%20conosco!`;
+  document.getElementById('btn-email-link').href  = 'mailto:'+(e.email||'');
 
-  // Respostas do Quiz
-  const answersMap = [
-    { label: 'Renda',       val: RENDA_LABEL[enriched.renda]    || enriched.renda    || enriched.raw?.['Estoque']    || '—' },
-    { label: 'Nome Sujo',   val: enriched.nome_sujo || enriched.raw?.['Tráfego Pago'] || '—' },
-    { label: 'Score',       val: enriched.score     || enriched.raw?.['Score']        || '—' },
-    { label: 'Tentativa',   val: enriched.raw?.['tentativa'] || enriched.raw?.['Meta Crescimento'] || '—' },
-  ];
-  document.getElementById('modal-answers').innerHTML = answersMap.map(a => `
-    <div class="bg-white/3 rounded-lg p-3">
-      <p class="text-xs text-slate-500 mb-1">${a.label}</p>
-      <p class="text-sm font-semibold text-white">${a.val}</p>
-    </div>
-  `).join('');
+  document.getElementById('modal-answers').innerHTML = [
+    { label:'Renda',     val: RENDA_LABEL[e.renda]||e.renda||'—' },
+    { label:'Nome Sujo', val: e.nome_sujo||'—' },
+    { label:'Score',     val: e.score||'—' },
+    { label:'Tentativa', val: e.raw?.['Tentativa']||'—' },
+  ].map(a=>`<div class="bg-white/3 rounded-lg p-3"><p class="text-xs text-slate-500 mb-1">${a.label}</p><p class="text-sm font-semibold text-white">${a.val}</p></div>`).join('');
 
-  document.getElementById('modal-status').value = enriched.status;
-  document.getElementById('modal-notes').value  = enriched.notes;
-
+  document.getElementById('modal-status').value = e.status;
+  document.getElementById('modal-notes').value  = e.notes;
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-function closeModal(e) {
-  if (!e || e.target === document.getElementById('modal-overlay')) {
+function closeModal(ev) {
+  if (!ev || ev.target===document.getElementById('modal-overlay')) {
     document.getElementById('modal-overlay').classList.remove('open');
     STATE.selectedLead = null;
   }
@@ -884,75 +1066,60 @@ function closeModal(e) {
 function updateLeadStatus(status) {
   if (!STATE.selectedLead) return;
   const id = STATE.selectedLead._id;
-  STATE.crm[id] = { ...(STATE.crm[id] || {}), status };
+  STATE.crm[id] = { ...(STATE.crm[id]||{}), status };
   STATE.selectedLead.status = status;
-  saveCRM();
-  renderDashboard();
-  renderLeads();
-  renderKanban();
-  toast('✅ Status atualizado: ' + STATUSES[status].label);
+  saveCRM(); renderDashboard(); renderLeads(); renderKanban();
+  toast('✅ Status: ' + STATUSES[status].label);
 }
 
 function updateLeadNotes(notes) {
   if (!STATE.selectedLead) return;
-  const id = STATE.selectedLead._id;
-  STATE.crm[id] = { ...(STATE.crm[id] || {}), notes };
+  STATE.crm[STATE.selectedLead._id] = { ...(STATE.crm[STATE.selectedLead._id]||{}), notes };
   saveCRM();
 }
 
-// ────────────────────────────────────────
+// ─────────────────────────────────────
 // UTILITÁRIOS
-// ────────────────────────────────────────
+// ─────────────────────────────────────
+function v(id) { return (document.getElementById(id)?.value||'').trim(); }
+function clearFields(...ids) { ids.forEach(id => { const el=document.getElementById(id); if(el) el.value=''; }); }
+function uid() { return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+
 function formatDate(d) {
   if (!d) return '—';
   const s = String(d);
   if (s.includes('T')) return new Date(s).toLocaleDateString('pt-BR');
-  return s.split(' ')[0] || s;
+  return s.split(' ')[0]||s;
 }
 
 function exportCSV() {
   if (!STATE.leads.length) { toast('⚠️ Sem dados para exportar'); return; }
   const enriched = STATE.leads.map(enrichLead);
   const headers  = ['Nome','Email','WhatsApp','Renda','Score','Nome Sujo','Status','Anotações','Data'];
-  const rows     = enriched.map(l => [
-    l.nome, l.email, l.whatsapp,
-    RENDA_LABEL[l.renda] || l.renda,
-    l.score, l.nome_sujo,
-    STATUSES[l.status]?.label || l.status,
-    l.notes, l.data
-  ].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(','));
-
-  const csv  = [headers.join(','), ...rows].join('\n');
-  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const rows     = enriched.map(l=>[l.nome,l.email,l.whatsapp,RENDA_LABEL[l.renda]||l.renda,l.score,l.nome_sujo,STATUSES[l.status]?.label||l.status,l.notes,l.data].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv  = [headers.join(','),...rows].join('\n');
+  const blob = new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href = url; a.download = `leads_automatize_${new Date().toISOString().slice(0,10)}.csv`;
+  a.href=url; a.download=`leads_automatize_${new Date().toISOString().slice(0,10)}.csv`;
   a.click(); URL.revokeObjectURL(url);
   toast('✅ CSV exportado!');
 }
 
 function copyCode() {
-  const code = document.getElementById('code-snippet').innerText;
-  navigator.clipboard.writeText(code).then(() => toast('✅ Código copiado!'));
+  navigator.clipboard.writeText(document.getElementById('code-snippet').innerText)
+    .then(()=>toast('✅ Código copiado!'));
 }
 
 let toastTimer;
 function toast(msg) {
-  const el    = document.getElementById('toast');
-  const inner = document.getElementById('toast-inner');
-  inner.textContent = msg;
-  el.style.opacity  = '1';
-  el.style.transform = 'translateX(-50%) translateY(0)';
+  const el=document.getElementById('toast'), inner=document.getElementById('toast-inner');
+  inner.textContent=msg;
+  el.style.opacity='1'; el.style.transform='translateX(-50%) translateY(0)';
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => {
-    el.style.opacity  = '0';
-    el.style.transform = 'translateX(-50%) translateY(16px)';
-  }, 3000);
+  toastTimer=setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(-50%) translateY(16px)'; },3000);
 }
 
-// ────────────────────────────────────────
-// START
-// ────────────────────────────────────────
 boot();
 </script>
 </body>
