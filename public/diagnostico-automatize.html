@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raio-X Comercial | AUTOMATIZE</title>
+<style>
+  :root {
+    --neon: #00e5ff;
+    --neon2: #7c3aed;
+    --neon3: #10b981;
+    --bg: #080c14;
+    --bg2: #0d1321;
+    --bg3: #111827;
+    --card: #141d2e;
+    --card2: #1a2540;
+    --border: #1e3a5f;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --danger: #ef4444;
+    --warn: #f59e0b;
+    --success: #10b981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  #app { position: relative; z-index: 1; }
+
+  /* ── Header ── */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,12,20,.9);
+    backdrop-filter: blur(10px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: .6rem; font-weight: 700; font-size: 1.1rem; letter-spacing: .05em; }
+  .logo-icon { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--neon2), var(--neon)); display: flex; align-items: center; justify-content: center; font-size: .9rem; }
+  .badge-header { font-size: .7rem; background: rgba(0,229,255,.1); color: var(--neon); border: 1px solid rgba(0,229,255,.3); padding: .2rem .6rem; border-radius: 100px; }
+
+  /* ── Progress ── */
+  .progress-wrap { padding: 1.5rem 2rem .5rem; max-width: 860px; margin: 0 auto; }
+  .progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
+  .progress-label { font-size: .8rem; color: var(--muted); }
+  .progress-pct { font-size: .8rem; color: var(--neon); font-weight: 600; }
+  .progress-bar-outer { height: 6px; background: var(--card2); border-radius: 99px; overflow: hidden; }
+  .progress-bar-inner { height: 100%; background: linear-gradient(90deg, var(--neon2), var(--neon)); border-radius: 99px; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+  /* ── Phase badges ── */
+  .phases { display: flex; gap: .4rem; padding: .5rem 2rem 1rem; max-width: 860px; margin: 0 auto; flex-wrap: wrap; }
+  .phase-chip {
+    font-size: .7rem; padding: .25rem .7rem; border-radius: 100px; cursor: default;
+    border: 1px solid var(--border); color: var(--muted); transition: all .3s;
+    display: flex; align-items: center; gap: .3rem;
+  }
+  .phase-chip.active { border-color: var(--neon); color: var(--neon); background: rgba(0,229,255,.07); }
+  .phase-chip.done { border-color: var(--success); color: var(--success); background: rgba(16,185,129,.07); }
+  .phase-chip .medal { font-size: .9rem; }
+
+  /* ── Performance Meter ── */
+  .perf-wrap { max-width: 860px; margin: 0 auto; padding: 0 2rem 1.5rem; }
+  .perf-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1rem 1.25rem; display: flex; align-items: center; gap: 1rem;
+  }
+  .perf-label { font-size: .75rem; color: var(--muted); white-space: nowrap; }
+  .perf-bar-outer { flex: 1; height: 8px; background: var(--card2); border-radius: 99px; overflow: hidden; }
+  .perf-bar-inner { height: 100%; border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1), background .6s; }
+  .perf-score { font-size: 1.1rem; font-weight: 700; min-width: 3rem; text-align: right; }
+  .perf-change { font-size: .7rem; padding: .15rem .4rem; border-radius: 4px; }
+
+  /* ── Main content ── */
+  main { max-width: 860px; margin: 0 auto; padding: 1rem 2rem 4rem; }
+
+  /* ── Section ── */
+  .section-header {
+    display: flex; align-items: center; gap: .75rem;
+    margin-bottom: 1.5rem;
+  }
+  .section-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .section-title { font-size: 1.1rem; font-weight: 700; }
+  .section-sub { font-size: .82rem; color: var(--muted); margin-top: .15rem; }
+
+  /* ── Questions ── */
+  .question-block { margin-bottom: 2rem; }
+  .question-label {
+    font-size: .9rem; font-weight: 500; margin-bottom: .75rem;
+    display: flex; align-items: flex-start; gap: .5rem; line-height: 1.4;
+  }
+  .q-num { color: var(--neon); font-weight: 700; flex-shrink: 0; }
+
+  /* Inputs */
+  input[type="number"], input[type="text"] {
+    width: 100%; padding: .65rem 1rem;
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: .95rem;
+    outline: none; transition: border-color .2s;
+  }
+  input[type="number"]:focus, input[type="text"]:focus { border-color: var(--neon); }
+  input[type="number"]::placeholder, input[type="text"]::placeholder { color: var(--muted); }
+
+  /* Radio/Button choices */
+  .choices { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .choice-btn {
+    padding: .55rem 1.1rem; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--card2);
+    color: var(--text); font-size: .88rem; cursor: pointer;
+    transition: all .2s; user-select: none;
+  }
+  .choice-btn:hover { border-color: var(--neon); color: var(--neon); }
+  .choice-btn.selected { border-color: var(--neon); background: rgba(0,229,255,.1); color: var(--neon); font-weight: 600; }
+
+  /* Dropdown */
+  select {
+    width: 100%; padding: .65rem 1rem;
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: .95rem;
+    outline: none; cursor: pointer; transition: border-color .2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 1rem center;
+  }
+  select:focus { border-color: var(--neon); }
+  select option { background: var(--card2); color: var(--text); }
+
+  /* Slider (NPS) */
+  .nps-wrap { display: flex; flex-direction: column; gap: .5rem; }
+  .nps-row { display: flex; align-items: center; gap: 1rem; }
+  .nps-name { font-size: .85rem; color: var(--muted); min-width: 200px; flex: 1; }
+  .nps-slider { flex: 2; }
+  input[type="range"] {
+    -webkit-appearance: none; width: 100%; height: 4px;
+    background: var(--card2); border-radius: 99px; outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--neon); cursor: pointer; border: 2px solid var(--bg);
+    box-shadow: 0 0 8px rgba(0,229,255,.5);
+  }
+  .nps-val { min-width: 28px; text-align: center; font-weight: 700; font-size: .9rem; color: var(--neon); }
+  .nps-labels { display: flex; justify-content: space-between; font-size: .7rem; color: var(--muted); padding: 0 2px; }
+
+  /* ── Insight bubble ── */
+  .insight {
+    margin-top: .75rem; padding: .75rem 1rem;
+    background: rgba(0,229,255,.04); border-left: 3px solid var(--neon);
+    border-radius: 0 8px 8px 0; font-size: .82rem; color: var(--muted);
+    line-height: 1.5; opacity: 0; max-height: 0; overflow: hidden;
+    transition: opacity .4s, max-height .4s;
+  }
+  .insight.visible { opacity: 1; max-height: 200px; }
+  .insight strong { color: var(--neon); }
+
+  /* ── Alert bubble ── */
+  .alert-bubble {
+    margin-top: .75rem; padding: .75rem 1rem;
+    border-radius: 8px; font-size: .82rem; line-height: 1.5;
+    display: none;
+  }
+  .alert-bubble.warn { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.3); color: #fcd34d; }
+  .alert-bubble.danger { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; }
+  .alert-bubble.success { background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.3); color: #6ee7b7; }
+  .alert-bubble.show { display: block; }
+
+  /* ── Conditional block ── */
+  .conditional { display: none; }
+  .conditional.show { display: block; }
+
+  /* ── Navigation ── */
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .btn {
+    padding: .7rem 1.8rem; border-radius: 8px; border: none;
+    font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .2s;
+  }
+  .btn-secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--neon); color: var(--neon); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--neon2), var(--neon));
+    color: #fff; box-shadow: 0 0 20px rgba(0,229,255,.2);
+  }
+  .btn-primary:hover { box-shadow: 0 0 30px rgba(0,229,255,.4); transform: translateY(-1px); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none !important; }
+
+  /* ── Medal animation ── */
+  @keyframes medalPop {
+    0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+    70% { transform: scale(1.2) rotate(5deg); }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+  .medal-popup {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    background: var(--card); border: 1px solid var(--neon);
+    border-radius: 16px; padding: 2rem 3rem; text-align: center;
+    z-index: 999; display: none;
+    box-shadow: 0 0 60px rgba(0,229,255,.2);
+  }
+  .medal-popup.show { display: block; animation: medalPop .5s cubic-bezier(.34,1.56,.64,1) forwards; }
+  .medal-popup .medal-emoji { font-size: 3rem; display: block; margin-bottom: .5rem; }
+  .medal-popup .medal-title { font-size: 1.1rem; font-weight: 700; color: var(--neon); }
+  .medal-popup .medal-desc { font-size: .82rem; color: var(--muted); margin-top: .3rem; }
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 998; display: none; backdrop-filter: blur(4px); }
+  .overlay.show { display: block; }
+
+  /* ── REPORT / DASHBOARD ── */
+  #report { display: none; }
+  #report.show { display: block; }
+
+  .report-header {
+    text-align: center; padding: 3rem 0 2rem;
+  }
+  .report-header .report-logo { font-size: 2.5rem; font-weight: 900; letter-spacing: -.02em; margin-bottom: .5rem; }
+  .report-header .report-logo span { color: var(--neon); }
+  .report-sub { font-size: .9rem; color: var(--muted); }
+
+  /* KPI row */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .kpi-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.25rem; text-align: center;
+  }
+  .kpi-card .kpi-label { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .4rem; }
+  .kpi-card .kpi-value { font-size: 1.6rem; font-weight: 800; }
+  .kpi-card .kpi-status { font-size: .72rem; margin-top: .3rem; padding: .2rem .5rem; border-radius: 4px; display: inline-block; }
+  .kpi-card.kpi-ok { border-color: rgba(16,185,129,.3); }
+  .kpi-card.kpi-ok .kpi-value { color: var(--success); }
+  .kpi-card.kpi-ok .kpi-status { background: rgba(16,185,129,.1); color: var(--success); }
+  .kpi-card.kpi-warn { border-color: rgba(245,158,11,.3); }
+  .kpi-card.kpi-warn .kpi-value { color: var(--warn); }
+  .kpi-card.kpi-warn .kpi-status { background: rgba(245,158,11,.1); color: var(--warn); }
+  .kpi-card.kpi-danger { border-color: rgba(239,68,68,.3); }
+  .kpi-card.kpi-danger .kpi-value { color: var(--danger); }
+  .kpi-card.kpi-danger .kpi-status { background: rgba(239,68,68,.1); color: var(--danger); }
+  .kpi-card.kpi-info .kpi-value { color: var(--neon); }
+
+  /* Diagnosis cards */
+  .diag-grid { display: grid; gap: 1rem; margin: 1.5rem 0; }
+  .diag-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 1.5rem; position: relative; overflow: hidden;
+  }
+  .diag-card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+  }
+  .diag-card.dc-neon::before { background: var(--neon); }
+  .diag-card.dc-purple::before { background: var(--neon2); }
+  .diag-card.dc-green::before { background: var(--success); }
+  .diag-card.dc-warn::before { background: var(--warn); }
+  .diag-card .dc-tag { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .5rem; display: flex; align-items: center; gap: .4rem; }
+  .diag-card.dc-neon .dc-tag { color: var(--neon); }
+  .diag-card.dc-purple .dc-tag { color: #a78bfa; }
+  .diag-card.dc-green .dc-tag { color: var(--success); }
+  .diag-card.dc-warn .dc-tag { color: var(--warn); }
+  .diag-card .dc-title { font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+  .diag-card .dc-body { font-size: .85rem; color: var(--muted); line-height: 1.65; }
+  .diag-card .dc-solution { margin-top: 1rem; padding: .75rem 1rem; background: var(--card2); border-radius: 8px; font-size: .82rem; line-height: 1.6; }
+  .diag-card.dc-neon .dc-solution { border-left: 2px solid var(--neon); }
+  .diag-card.dc-purple .dc-solution { border-left: 2px solid var(--neon2); }
+  .diag-card.dc-green .dc-solution { border-left: 2px solid var(--success); }
+  .diag-card.dc-warn .dc-solution { border-left: 2px solid var(--warn); }
+  .dc-solution-title { font-weight: 700; margin-bottom: .3rem; color: var(--text); font-size: .82rem; }
+  .dc-solution p { color: var(--muted); }
+
+  /* Funnel visual */
+  .funnel-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin: 1.5rem 0; }
+  .funnel-title { font-size: .85rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+  .funnel-stage { margin-bottom: .5rem; }
+  .funnel-stage-label { display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); margin-bottom: .25rem; }
+  .funnel-bar-outer { height: 28px; background: var(--card2); border-radius: 6px; overflow: hidden; }
+  .funnel-bar-inner { height: 100%; display: flex; align-items: center; padding-left: .75rem; font-size: .75rem; font-weight: 700; border-radius: 6px; min-width: 60px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+
+  /* Score gauge */
+  .gauge-wrap { display: flex; justify-content: center; margin: 2rem 0; }
+  .gauge-svg { overflow: visible; }
+
+  /* CTA */
+  .cta-section {
+    text-align: center; padding: 3rem;
+    background: linear-gradient(135deg, rgba(124,58,237,.15), rgba(0,229,255,.1));
+    border: 1px solid var(--border); border-radius: 16px; margin: 2rem 0;
+  }
+  .cta-section h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: .75rem; }
+  .cta-section p { color: var(--muted); font-size: .9rem; max-width: 480px; margin: 0 auto 1.5rem; line-height: 1.6; }
+  .cta-btn {
+    display: inline-block; padding: .9rem 2.5rem;
+    background: linear-gradient(135deg, var(--neon2), var(--neon));
+    color: #fff; font-weight: 700; font-size: 1rem; border-radius: 10px;
+    border: none; cursor: pointer; text-decoration: none;
+    box-shadow: 0 0 30px rgba(0,229,255,.25); transition: all .2s;
+  }
+  .cta-btn:hover { box-shadow: 0 0 50px rgba(0,229,255,.45); transform: translateY(-2px); }
+
+  /* JSON output */
+  .json-block {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem; font-family: 'Courier New', monospace; font-size: .75rem;
+    color: #a0aec0; overflow-x: auto; max-height: 300px; overflow-y: auto;
+    white-space: pre; margin: 1rem 0;
+  }
+
+  .section-divider { height: 1px; background: var(--border); margin: 2.5rem 0; }
+
+  @media (max-width: 600px) {
+    header { padding: .75rem 1rem; }
+    main, .progress-wrap, .phases, .perf-wrap { padding-left: 1rem; padding-right: 1rem; }
+    .nps-row { flex-direction: column; align-items: flex-start; gap: .4rem; }
+    .nps-name { min-width: unset; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    AUTOMATIZE
+  </div>
+  <div class="badge-header">Raio-X Comercial</div>
+</header>
+
+<!-- Medal popup -->
+<div class="overlay" id="overlay"></div>
+<div class="medal-popup" id="medalPopup">
+  <span class="medal-emoji" id="medalEmoji">🏅</span>
+  <div class="medal-title" id="medalTitle">Fase Concluída!</div>
+  <div class="medal-desc" id="medalDesc">Continue para próxima etapa</div>
+</div>
+
+<!-- ── FORM ── -->
+<div id="formView">
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span class="progress-label" id="progressLabel">Fase 1 de 5</span>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="progressBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="phases" id="phaseChips"></div>
+
+  <div class="perf-wrap">
+    <div class="perf-card">
+      <span class="perf-label">Performance da Loja</span>
+      <div class="perf-bar-outer">
+        <div class="perf-bar-inner" id="perfBar" style="width:50%;background:#f59e0b"></div>
+      </div>
+      <span class="perf-score" id="perfScore" style="color:#f59e0b">50</span>
+      <span class="perf-change" id="perfChange" style="background:rgba(245,158,11,.1);color:#f59e0b"></span>
+    </div>
+  </div>
+
+  <main>
+    <!-- ─────────── FASE 1 ─────────── -->
+    <section id="phase-1">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(0,229,255,.1)">📦</div>
+        <div>
+          <div class="section-title">Volumetria e Capacidade de Estoque</div>
+          <div class="section-sub">Mapeando o tamanho da sua operação</div>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">01</span> Quantos veículos você tem disponíveis em estoque hoje?</div>
+        <input type="number" id="q1" placeholder="Ex: 45" min="0" oninput="onQ1()">
+        <div class="insight" id="ins1">
+          Estoque saudável para uma loja com <strong>1–3 vendedores</strong> fica entre <strong>15 e 40 unidades</strong>. Excesso de estoque imobiliza capital; falta reduz opções para o cliente.
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">02</span> Qual a sua média de vendas mensais?</div>
+        <input type="number" id="q2" placeholder="Ex: 18" min="0" oninput="onQ2()">
+        <div class="insight" id="ins2">
+          Calculando seu <strong>Giro de Estoque</strong> em tempo real...
+        </div>
+        <div class="alert-bubble warn" id="alertGiro">
+          ⚠️ <strong>Capital parado!</strong> Seu giro de estoque está abaixo de 0.5 — isso significa que você leva mais de 2 meses para vender todo o estoque. A AUTOMATIZE ajuda a acelerar o giro via tráfego segmentado e automação de follow-up.
+        </div>
+        <div class="alert-bubble success" id="alertGiroOk">
+          ✅ Seu giro está saudável! Manter esse ritmo é fundamental — vamos garantir que os leads entrem na velocidade certa.
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── FASE 2 ─────────── -->
+    <section id="phase-2" style="display:none">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(124,58,237,.1)">📡</div>
+        <div>
+          <div class="section-title">Raio-X de Marketing e Investimento</div>
+          <div class="section-sub">Medindo o retorno real do seu investimento</div>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">03</span> Você realiza campanhas de tráfego pago hoje?</div>
+        <div class="choices" id="q3choices">
+          <button class="choice-btn" onclick="selectChoice('q3','Sim',this)">✅ Sim</button>
+          <button class="choice-btn" onclick="selectChoice('q3','Não',this)">❌ Não</button>
+        </div>
+        <div class="insight" id="ins3">
+          Lojas que investem em <strong>Meta Ads + Google Ads</strong> de forma estruturada geram entre <strong>3x e 8x mais leads</strong> qualificados do que as que dependem apenas de fluxo orgânico.
+        </div>
+        <div class="alert-bubble warn" id="alertTrafego">
+          ⚠️ Sem tráfego pago, sua loja depende 100% de fluxo espontâneo e indicação. Você está deixando leads na mesa todos os dias.
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">04</span> Como é feita a gestão do seu marketing?</div>
+        <div class="choices" id="q4choices">
+          <button class="choice-btn" onclick="selectChoice('q4','Agência Externa',this)">🏢 Agência Externa</button>
+          <button class="choice-btn" onclick="selectChoice('q4','Time Interno',this)">👥 Time Interno</button>
+          <button class="choice-btn" onclick="selectChoice('q4','Eu mesmo faço',this)">🙋 Eu mesmo faço</button>
+          <button class="choice-btn" onclick="selectChoice('q4','Não faço',this)">🚫 Não faço</button>
+        </div>
+        <div class="insight" id="ins4">
+          A gestão de marketing para o setor automotivo exige <strong>especialização em intenção de compra</strong> e segmentação por modelo/faixa de preço. Agências generalistas frequentemente geram leads sem qualidade.
+        </div>
+      </div>
+
+      <div class="conditional" id="condAgencia">
+        <div class="question-block">
+          <div class="question-label"><span class="q-num">05</span> Qual o valor mensal pago pela gestão?</div>
+          <input type="number" id="q5" placeholder="R$ Ex: 2500" min="0" oninput="onCalcCPL()">
+          <div class="insight" id="ins5">
+            O custo de gestão deve ser avaliado sempre em relação ao <strong>resultado gerado</strong>. Um gestor de R$5.000 que traz 200 leads qualificados é mais barato do que um de R$1.500 que traz 10.
+          </div>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">06</span> Qual o valor investido diretamente em anúncios por mês?</div>
+        <input type="number" id="q6" placeholder="R$ Ex: 5000" min="0" oninput="onCalcCPL()">
+        <div class="insight" id="ins6">
+          O <strong>investimento mínimo recomendado</strong> para o setor automotivo no Meta Ads é R$3.000/mês. Abaixo disso, o algoritmo não tem dados suficientes para otimizar.
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">07</span> Quantos leads o tráfego pago gera por mês?</div>
+        <input type="number" id="q7" placeholder="Ex: 120" min="0" oninput="onCalcCPL()">
+        <div class="alert-bubble" id="alertCPL">
+          CPL calculado em tempo real...
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── FASE 3 ─────────── -->
+    <section id="phase-3" style="display:none">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(16,185,129,.1)">🏪</div>
+        <div>
+          <div class="section-title">Canais de Atração Orgânica e Comercial</div>
+          <div class="section-sub">Entendendo todas as fontes de receita</div>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">08</span> Quantas vendas acontecem por fluxo espontâneo de visitas (sem tráfego)?</div>
+        <input type="number" id="q8" placeholder="Ex: 5" min="0" oninput="updatePerf();showInsight('ins8')">
+        <div class="insight" id="ins8">
+          Vendas por <strong>fluxo espontâneo</strong> são as mais baratas — custo de aquisição quase zero. Porém são imprevisíveis e difíceis de escalar sem investimento em localização/sinalização.
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">09</span> Quantas vendas são geradas pelos anúncios orgânicos dos próprios vendedores?</div>
+        <input type="number" id="q9" placeholder="Ex: 8" min="0" oninput="updatePerf();showInsight('ins9')">
+        <div class="insight" id="ins9">
+          Vendedores que publicam organicamente no <strong>OLX, Marketplace e Instagram</strong> geram até 40% das vendas em lojas não estruturadas. Isso é positivo, mas revela dependência de esforço individual em vez de sistema.
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">10</span> Quantos vendedores (Closers) atuam na loja?</div>
+        <input type="number" id="q10" placeholder="Ex: 4" min="0" oninput="updatePerf();showInsight('ins10')">
+        <div class="insight" id="ins10">
+          Um <strong>Closer eficiente</strong> com suporte de pré-venda e CRM consegue atender entre 60 e 100 leads/mês com qualidade. Sem ferramentas, esse número cai para 20–30.
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">11</span> A loja possui SDRs / Pré-vendedores para triagem?</div>
+        <div class="choices" id="q11choices">
+          <button class="choice-btn" onclick="selectChoice('q11','Sim',this);updatePerf()">✅ Sim</button>
+          <button class="choice-btn" onclick="selectChoice('q11','Não',this);updatePerf()">❌ Não</button>
+        </div>
+        <div class="insight" id="ins11">
+          Lojas com <strong>pré-venda estruturada</strong> aumentam a taxa de comparecimento em até <strong>65%</strong>. O SDR qualifica o lead, coleta documentação e agenda visita — o Closer só fecha.
+        </div>
+        <div class="alert-bubble warn" id="alertSDR">
+          ⚠️ Sem pré-venda, seus closers perdem tempo triando leads frios. A AUTOMATIZE substitui o SDR com IA, qualificando o lead nos primeiros 60 segundos.
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">12</span> Você utiliza um CRM para gerir os leads?</div>
+        <select id="q12" onchange="onCRM()">
+          <option value="">Selecione...</option>
+          <option>Não utilizo</option>
+          <option>HubSpot</option>
+          <option>Pipedrive</option>
+          <option>RD Station</option>
+          <option>Kommo (amoCRM)</option>
+          <option>Bitrix24</option>
+          <option>Agendor</option>
+          <option>Salesforce</option>
+          <option>Planilha do Excel/Google</option>
+          <option>WhatsApp manual</option>
+          <option>Outro</option>
+        </select>
+        <div class="alert-bubble danger" id="alertCRM">
+          🚨 <strong>Risco alto!</strong> Sem CRM, você está perdendo leads no esquecimento. Pesquisas mostram que 78% dos leads sem follow-up em até 5 minutos nunca são convertidos.
+        </div>
+        <div class="alert-bubble warn" id="alertCRMPlanilha">
+          ⚠️ Planilhas não têm automação. Você está usando força manual para tarefas que um CRM executa automaticamente — a AUTOMATIZE integra diretamente com os principais CRMs do mercado.
+        </div>
+        <div class="alert-bubble success" id="alertCRMOk">
+          ✅ Você já usa um CRM! Excelente. A AUTOMATIZE se integra e potencializa seu CRM com automações de IA.
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── FASE 4 ─────────── -->
+    <section id="phase-4" style="display:none">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(245,158,11,.1)">🌡️</div>
+        <div>
+          <div class="section-title">Termômetro de Satisfação</div>
+          <div class="section-sub">Como você avalia sua operação atual?</div>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">13</span> Avalie seu nível de satisfação com cada área (0 = Péssimo · 10 = Excelente)</div>
+        <div class="nps-wrap" style="margin-top:.75rem">
+          <div class="nps-row">
+            <span class="nps-name">Resultados gerais de vendas</span>
+            <div class="nps-slider"><input type="range" min="0" max="10" value="5" id="nps1" oninput="npsChange('nps1','nps1v');updatePerf()"></div>
+            <span class="nps-val" id="nps1v">5</span>
+          </div>
+          <div class="nps-labels" style="margin-left:210px; margin-right:42px; font-size:.65rem; color:var(--muted)"><span>Péssimo</span><span>Excelente</span></div>
+
+          <div class="nps-row" style="margin-top:.75rem">
+            <span class="nps-name">Quantidade e qualidade dos Leads</span>
+            <div class="nps-slider"><input type="range" min="0" max="10" value="5" id="nps2" oninput="npsChange('nps2','nps2v');updatePerf()"></div>
+            <span class="nps-val" id="nps2v">5</span>
+          </div>
+
+          <div class="nps-row" style="margin-top:.75rem">
+            <span class="nps-name">Organização e processos do time</span>
+            <div class="nps-slider"><input type="range" min="0" max="10" value="5" id="nps3" oninput="npsChange('nps3','nps3v');updatePerf()"></div>
+            <span class="nps-val" id="nps3v">5</span>
+          </div>
+
+          <div class="nps-row" style="margin-top:.75rem">
+            <span class="nps-name">Desempenho da estratégia de marketing</span>
+            <div class="nps-slider"><input type="range" min="0" max="10" value="5" id="nps4" oninput="npsChange('nps4','nps4v');updatePerf()"></div>
+            <span class="nps-val" id="nps4v">5</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── FASE 5 ─────────── -->
+    <section id="phase-5" style="display:none">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(124,58,237,.1)">🚀</div>
+        <div>
+          <div class="section-title">Visão de Futuro e Maturidade Métrica</div>
+          <div class="section-sub">Onde você quer chegar?</div>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">14</span> Qual a taxa de crescimento ideal para os próximos 3 meses? (%)</div>
+        <input type="number" id="q14" placeholder="Ex: 30" min="0" max="500" oninput="updatePerf();showInsight('ins14')">
+        <div class="insight" id="ins14">
+          Uma meta de crescimento de <strong>20–40%</strong> em 3 meses é ambiciosa mas alcançável com as estratégias certas. Acima de 50% requer estrutura sólida de pré-venda, CRM e tráfego.
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label"><span class="q-num">15</span> Você domina e acompanha indicadores como ARR, GMV e CAC na sua operação?</div>
+        <div class="choices" id="q15choices">
+          <button class="choice-btn" onclick="selectChoice('q15','Sim, domino',this);updatePerf()">📊 Sim, domino e acompanho</button>
+          <button class="choice-btn" onclick="selectChoice('q15','Conheço mas não acompanho',this);updatePerf()">📝 Conheço mas não acompanho</button>
+          <button class="choice-btn" onclick="selectChoice('q15','Não conheço',this);updatePerf()">❓ Não conheço</button>
+        </div>
+        <div class="insight" id="ins15">
+          <strong>ARR</strong> (Receita Recorrente Anual), <strong>GMV</strong> (Volume Total Transacionado) e <strong>CAC</strong> (Custo de Aquisição de Cliente) são os 3 KPIs que todo lojista de alta performance monitora semanalmente. A AUTOMATIZE entrega dashboards com esses indicadores em tempo real.
+        </div>
+      </div>
+    </section>
+
+    <!-- NAV -->
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="btnBack" onclick="prevPhase()" disabled>← Voltar</button>
+      <button class="btn btn-primary" id="btnNext" onclick="nextPhase()">Próxima Fase →</button>
+    </div>
+  </main>
+</div>
+
+<!-- ── REPORT ── -->
+<div id="report">
+  <div class="report-header">
+    <div class="report-logo">RAIO-X <span>AUTOMATIZE</span></div>
+    <div class="report-sub">Diagnóstico Personalizado da Sua Operação Comercial</div>
+  </div>
+
+  <main style="max-width:860px;margin:0 auto;padding:0 2rem 4rem">
+
+    <!-- Score gauge -->
+    <div class="gauge-wrap">
+      <svg class="gauge-svg" width="280" height="160" viewBox="0 0 280 160">
+        <defs>
+          <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ef4444"/>
+            <stop offset="50%" stop-color="#f59e0b"/>
+            <stop offset="100%" stop-color="#10b981"/>
+          </linearGradient>
+        </defs>
+        <!-- Track -->
+        <path d="M 30 140 A 110 110 0 0 1 250 140" fill="none" stroke="#1a2540" stroke-width="18" stroke-linecap="round"/>
+        <!-- Fill -->
+        <path id="gaugeFill" d="M 30 140 A 110 110 0 0 1 250 140" fill="none" stroke="url(#gaugeGrad)" stroke-width="18" stroke-linecap="round" stroke-dasharray="0 346"/>
+        <!-- Center -->
+        <text x="140" y="125" text-anchor="middle" fill="#e2e8f0" font-size="36" font-weight="800" id="gaugeScore">—</text>
+        <text x="140" y="148" text-anchor="middle" fill="#64748b" font-size="12">Performance Geral</text>
+      </svg>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="section-divider"></div>
+
+    <!-- Funil -->
+    <div class="funnel-wrap" id="funnelWrap"></div>
+
+    <div class="section-divider"></div>
+
+    <!-- Diagnosis cards -->
+    <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:1rem">Diagnóstico por Área</div>
+    <div class="diag-grid" id="diagGrid"></div>
+
+    <div class="section-divider"></div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <h2>Sua operação está pronta para escalar?</h2>
+      <p>A AUTOMATIZE já ajudou dezenas de lojistas automotivos a triplicar o volume de leads qualificados e reduzir o tempo de resposta para menos de 60 segundos.</p>
+      <a href="#" class="cta-btn" onclick="sendToAPI()">Quero a Solução AUTOMATIZE →</a>
+    </div>
+
+    <!-- JSON -->
+    <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.5rem">📋 Dados Coletados (JSON para API)</div>
+    <div class="json-block" id="jsonOutput"></div>
+
+  </main>
+</div>
+
+</div><!-- #app -->
+
+<script>
+// ─── State ───────────────────────────────────────────────
+const state = {
+  currentPhase: 1,
+  totalPhases: 5,
+  perfScore: 50,
+  answers: {},
+  medals: {}
+};
+
+const phases = [
+  { label: 'Estoque',   icon: '📦', medal: '🥉', medalTitle: 'Estoque Mapeado!',     medalDesc: 'Seção 1 concluída — você conhece sua capacidade.' },
+  { label: 'Marketing', icon: '📡', medal: '🥈', medalTitle: 'Investimento Analisado!', medalDesc: 'ROI do seu marketing está na mira.' },
+  { label: 'Operação',  icon: '🏪', medal: '🥇', medalTitle: 'Operação Rastreada!',  medalDesc: 'Seus canais de venda estão no mapa.' },
+  { label: 'Satisfação',icon: '🌡️', medal: '🏆', medalTitle: 'Sentimento Capturado!', medalDesc: 'Sua percepção é parte do diagnóstico.' },
+  { label: 'Visão',     icon: '🚀', medal: '💎', medalTitle: 'Diagnóstico Completo!',  medalDesc: 'Gerando seu relatório personalizado...' },
+];
+
+// ─── Init ─────────────────────────────────────────────────
+function init() {
+  renderPhaseChips();
+  updateProgress();
+}
+
+function renderPhaseChips() {
+  const el = document.getElementById('phaseChips');
+  el.innerHTML = phases.map((p, i) => {
+    const n = i + 1;
+    const cls = n < state.currentPhase ? 'done' : n === state.currentPhase ? 'active' : '';
+    const icon = n < state.currentPhase ? `<span class="medal">${p.medal}</span>` : p.icon;
+    return `<div class="phase-chip ${cls}">${icon} ${p.label}</div>`;
+  }).join('');
+}
+
+function updateProgress() {
+  const pct = Math.round(((state.currentPhase - 1) / state.totalPhases) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressLabel').textContent = `Fase ${state.currentPhase} de ${state.totalPhases}`;
+  document.getElementById('btnBack').disabled = state.currentPhase === 1;
+  document.getElementById('btnNext').textContent = state.currentPhase === state.totalPhases ? 'Ver Diagnóstico 🚀' : 'Próxima Fase →';
+  renderPhaseChips();
+}
+
+// ─── Performance Score ────────────────────────────────────
+function updatePerf() {
+  let score = 50;
+
+  // Q1 + Q2 giro
+  const est = +get('q1') || 0, vend = +get('q2') || 0;
+  if (est > 0 && vend > 0) {
+    const giro = vend / est;
+    if (giro >= 0.7) score += 8;
+    else if (giro >= 0.5) score += 4;
+    else score -= 8;
+  }
+
+  // Q3 trafego
+  if (get('q3') === 'Sim') score += 8; else if (get('q3') === 'Não') score -= 8;
+
+  // Q4 gestao
+  const g = get('q4');
+  if (g === 'Agência Externa') score += 3;
+  if (g === 'Time Interno') score += 5;
+  if (g === 'Eu mesmo faço') score -= 3;
+  if (g === 'Não faço') score -= 10;
+
+  // Q6 midia
+  const midia = +get('q6') || 0;
+  if (midia >= 5000) score += 5;
+  else if (midia >= 2000) score += 2;
+  else if (midia > 0) score -= 3;
+
+  // Q7 leads + CPL
+  const leads = +get('q7') || 0;
+  if (leads >= 100) score += 5;
+  else if (leads >= 50) score += 2;
+
+  // Q11 SDR
+  if (get('q11') === 'Sim') score += 8; else if (get('q11') === 'Não') score -= 5;
+
+  // Q12 CRM
+  const crm = get('q12');
+  if (crm && crm !== 'Não utilizo' && crm !== 'Planilha do Excel/Google' && crm !== 'WhatsApp manual') score += 8;
+  else if (crm === 'Planilha do Excel/Google' || crm === 'WhatsApp manual') score -= 3;
+  else if (crm === 'Não utilizo') score -= 10;
+
+  // NPS
+  const npsAvg = ([1,2,3,4].reduce((s,n) => s + (+document.getElementById('nps'+n)?.value||5), 0)) / 4;
+  score += (npsAvg - 5) * 1.5;
+
+  // Q15
+  const met = get('q15');
+  if (met === 'Sim, domino') score += 6;
+  if (met === 'Conheço mas não acompanho') score += 2;
+  if (met === 'Não conheço') score -= 4;
+
+  score = Math.max(10, Math.min(100, Math.round(score)));
+  const prev = state.perfScore;
+  state.perfScore = score;
+
+  const bar = document.getElementById('perfBar');
+  const scoreEl = document.getElementById('perfScore');
+  const changeEl = document.getElementById('perfChange');
+
+  const color = score >= 70 ? '#10b981' : score >= 45 ? '#f59e0b' : '#ef4444';
+  bar.style.width = score + '%';
+  bar.style.background = score >= 70
+    ? 'linear-gradient(90deg,#059669,#10b981)'
+    : score >= 45
+    ? 'linear-gradient(90deg,#d97706,#f59e0b)'
+    : 'linear-gradient(90deg,#dc2626,#ef4444)';
+  scoreEl.textContent = score;
+  scoreEl.style.color = color;
+
+  const diff = score - prev;
+  if (diff !== 0) {
+    changeEl.textContent = (diff > 0 ? '+' : '') + diff;
+    changeEl.style.background = diff > 0 ? 'rgba(16,185,129,.15)' : 'rgba(239,68,68,.15)';
+    changeEl.style.color = diff > 0 ? '#10b981' : '#ef4444';
+    setTimeout(() => { changeEl.textContent = ''; }, 2000);
+  }
+}
+
+// ─── Helpers ──────────────────────────────────────────────
+function get(id) { return state.answers[id]; }
+function set(id, val) { state.answers[id] = val; }
+
+function showInsight(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('visible');
+}
+
+function selectChoice(qId, value, btn) {
+  set(qId, value);
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  // Side effects
+  if (qId === 'q3') {
+    const el = document.getElementById('alertTrafego');
+    el.classList.toggle('show', value === 'Não');
+    showInsight('ins3');
+    updatePerf();
+  }
+  if (qId === 'q4') {
+    const cond = document.getElementById('condAgencia');
+    cond.classList.toggle('show', value === 'Agência Externa' || value === 'Time Interno');
+    showInsight('ins4');
+    updatePerf();
+  }
+  if (qId === 'q11') {
+    document.getElementById('alertSDR').classList.toggle('show', value === 'Não');
+    showInsight('ins11');
+  }
+  if (qId === 'q15') {
+    showInsight('ins15');
+  }
+}
+
+function npsChange(sliderId, valId) {
+  const v = document.getElementById(sliderId).value;
+  document.getElementById(valId).textContent = v;
+}
+
+// ─── Q1/Q2 giro ───────────────────────────────────────────
+function onQ1() {
+  const v = document.getElementById('q1').value;
+  set('q1', v);
+  showInsight('ins1');
+  updatePerf();
+  checkGiro();
+}
+function onQ2() {
+  const v = document.getElementById('q2').value;
+  set('q2', v);
+  showInsight('ins2');
+  updatePerf();
+  checkGiro();
+}
+function checkGiro() {
+  const est = +get('q1') || 0, vend = +get('q2') || 0;
+  const warnEl = document.getElementById('alertGiro');
+  const okEl = document.getElementById('alertGiroOk');
+  const insEl = document.getElementById('ins2');
+  if (est > 0 && vend > 0) {
+    const giro = vend / est;
+    insEl.innerHTML = `Seu <strong>Giro de Estoque</strong> atual é <strong>${giro.toFixed(2)}</strong> — isso significa que você vende seu estoque completo a cada <strong>${(1/giro).toFixed(1)} mês(es)</strong>.`;
+    insEl.classList.add('visible');
+    warnEl.classList.toggle('show', giro < 0.5);
+    okEl.classList.toggle('show', giro >= 0.5);
+  } else {
+    warnEl.classList.remove('show'); okEl.classList.remove('show');
+  }
+}
+
+// ─── CPL calc ─────────────────────────────────────────────
+function onCalcCPL() {
+  const v6 = +document.getElementById('q6').value || 0;
+  const v7 = +document.getElementById('q7').value || 0;
+  const v5 = +document.getElementById('q5')?.value || 0;
+  set('q6', v6); set('q7', v7); set('q5', v5);
+  showInsight('ins6');
+  const el = document.getElementById('alertCPL');
+  if (v6 > 0 && v7 > 0) {
+    const totalInv = v6 + v5;
+    const cpl = totalInv / v7;
+    let cls = 'success', msg;
+    if (cpl <= 50) { msg = `✅ <strong>CPL de R$${cpl.toFixed(2)}</strong> — Excelente! Seu custo por lead está abaixo da média do setor (R$50–R$80).`; cls = 'success'; }
+    else if (cpl <= 120) { msg = `⚠️ <strong>CPL de R$${cpl.toFixed(2)}</strong> — Atenção. O custo está na média-alta. Otimização das campanhas pode reduzir 30–40%.`; cls = 'warn'; }
+    else { msg = `🚨 <strong>CPL de R$${cpl.toFixed(2)}</strong> — Crítico! Seu custo por lead é alto demais. A AUTOMATIZE reestrutura suas campanhas para CPLs abaixo de R$60.`; cls = 'danger'; }
+    el.className = `alert-bubble ${cls} show`;
+    el.innerHTML = msg;
+    set('cpl_calculado', cpl.toFixed(2));
+  } else {
+    el.className = 'alert-bubble';
+    el.textContent = '';
+  }
+  updatePerf();
+}
+
+function onCRM() {
+  const val = document.getElementById('q12').value;
+  set('q12', val);
+  document.getElementById('alertCRM').classList.toggle('show', val === 'Não utilizo');
+  document.getElementById('alertCRMPlanilha').classList.toggle('show', val === 'Planilha do Excel/Google' || val === 'WhatsApp manual');
+  document.getElementById('alertCRMOk').classList.toggle('show', val && val !== 'Não utilizo' && val !== 'Planilha do Excel/Google' && val !== 'WhatsApp manual');
+  updatePerf();
+}
+
+// ─── Navigation ───────────────────────────────────────────
+function nextPhase() {
+  if (state.currentPhase < state.totalPhases) {
+    saveCurrentPhase();
+    showMedal(state.currentPhase - 1, () => {
+      hidePhase(state.currentPhase);
+      state.currentPhase++;
+      showPhase(state.currentPhase);
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  } else {
+    saveCurrentPhase();
+    showMedal(4, () => { buildReport(); });
+  }
+}
+
+function prevPhase() {
+  hidePhase(state.currentPhase);
+  state.currentPhase--;
+  showPhase(state.currentPhase);
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showPhase(n) { const el = document.getElementById(`phase-${n}`); if (el) el.style.display = 'block'; }
+function hidePhase(n) { const el = document.getElementById(`phase-${n}`); if (el) el.style.display = 'none'; }
+
+function saveCurrentPhase() {
+  // Collect NPS values
+  [1,2,3,4].forEach(n => {
+    const el = document.getElementById('nps'+n);
+    if (el) set('nps'+n, el.value);
+  });
+  ['q1','q2','q6','q7','q8','q9','q10','q14'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) set(id, el.value);
+  });
+}
+
+function showMedal(phaseIdx, cb) {
+  const p = phases[phaseIdx];
+  document.getElementById('medalEmoji').textContent = p.medal;
+  document.getElementById('medalTitle').textContent = p.medalTitle;
+  document.getElementById('medalDesc').textContent = p.medalDesc;
+  document.getElementById('medalPopup').classList.add('show');
+  document.getElementById('overlay').classList.add('show');
+  setTimeout(() => {
+    document.getElementById('medalPopup').classList.remove('show');
+    document.getElementById('overlay').classList.remove('show');
+    cb();
+  }, 1800);
+}
+
+// ─── Report ───────────────────────────────────────────────
+function buildReport() {
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('report').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const s = state.answers;
+  const score = state.perfScore;
+
+  // Gauge animation
+  setTimeout(() => {
+    const total = 346;
+    const fill = (score / 100) * total;
+    document.getElementById('gaugeFill').setAttribute('stroke-dasharray', `${fill} ${total - fill}`);
+    document.getElementById('gaugeScore').textContent = score;
+  }, 300);
+
+  // KPIs
+  const est = +s.q1 || 0, vend = +s.q2 || 0;
+  const giro = est > 0 && vend > 0 ? (vend/est).toFixed(2) : 'N/A';
+  const midia = +s.q6 || 0, leads = +s.q7 || 0, gestao = +s.q5 || 0;
+  const cpl = leads > 0 ? ((midia + gestao) / leads).toFixed(2) : 'N/A';
+  const closers = +s.q10 || 1;
+  const totalVendas = (+s.q8||0) + (+s.q9||0) + vend;
+  const leadsPorCloser = leads > 0 ? Math.round(leads / closers) : 0;
+
+  const kpis = [
+    { label: 'Giro de Estoque', value: giro === 'N/A' ? '—' : giro + 'x', status: giro !== 'N/A' && +giro >= 0.5 ? 'Saudável' : 'Atenção', cls: giro !== 'N/A' && +giro >= 0.5 ? 'kpi-ok' : 'kpi-warn' },
+    { label: 'CPL (Custo/Lead)', value: cpl === 'N/A' ? '—' : 'R$'+cpl, status: cpl !== 'N/A' && +cpl <= 80 ? 'Eficiente' : 'Alto', cls: cpl !== 'N/A' && +cpl <= 80 ? 'kpi-ok' : 'kpi-danger' },
+    { label: 'Leads/Vendedor', value: leadsPorCloser || '—', status: leadsPorCloser >= 50 ? 'Bom volume' : 'Baixo', cls: leadsPorCloser >= 50 ? 'kpi-ok' : 'kpi-warn' },
+    { label: 'Invest. Mensal', value: midia > 0 ? 'R$'+midia.toLocaleString('pt-BR') : 'R$0', status: midia >= 3000 ? 'Adequado' : 'Insuficiente', cls: midia >= 3000 ? 'kpi-ok' : 'kpi-danger' },
+    { label: 'Performance Score', value: score, status: score >= 70 ? 'Alto' : score >= 45 ? 'Médio' : 'Crítico', cls: score >= 70 ? 'kpi-ok' : score >= 45 ? 'kpi-warn' : 'kpi-danger' },
+    { label: 'Leads/Mês', value: leads || '—', status: leads >= 80 ? 'Bom' : 'A melhorar', cls: leads >= 80 ? 'kpi-ok' : 'kpi-warn' },
+  ];
+  document.getElementById('kpiGrid').innerHTML = kpis.map(k => `
+    <div class="kpi-card ${k.cls}">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+      <div class="kpi-status">${k.status}</div>
+    </div>`).join('');
+
+  // Funnel
+  const orgLeads = leads;
+  const triagem = Math.round(orgLeads * .65);
+  const simulacao = Math.round(triagem * .7);
+  const visita = Math.round(simulacao * .5);
+  const vendaFinal = vend || Math.round(visita * .6);
+  const stages = [
+    { name: 'Leads gerados', val: orgLeads || 120, color: '#7c3aed' },
+    { name: 'Triagem / Pré-venda', val: triagem || 78, color: '#3b82f6' },
+    { name: 'Simulação de crédito', val: simulacao || 54, color: '#00e5ff' },
+    { name: 'Visita na loja', val: visita || 27, color: '#10b981' },
+    { name: 'Venda fechada', val: vendaFinal, color: '#f59e0b' },
+  ];
+  const maxVal = Math.max(...stages.map(s => s.val), 1);
+  document.getElementById('funnelWrap').innerHTML = `
+    <div class="funnel-title">Funil Comercial Estimado</div>
+    ${stages.map(s => `
+      <div class="funnel-stage">
+        <div class="funnel-stage-label"><span>${s.name}</span><span style="font-weight:700;color:var(--text)">${s.val}</span></div>
+        <div class="funnel-bar-outer">
+          <div class="funnel-bar-inner" style="width:${Math.round((s.val/maxVal)*100)}%;background:${s.color};color:#fff">${s.val}</div>
+        </div>
+      </div>`).join('')}`;
+
+  // Diagnosis
+  const diags = [];
+
+  // Baixa conversão / demora atendimento
+  const semSDR = s.q11 === 'Não';
+  const semCRM = s.q12 === 'Não utilizo';
+  if (semSDR || semCRM) {
+    diags.push({
+      cls: 'dc-neon', tag: '⚡ Velocidade de Atendimento', title: 'Leads esfriando antes do 1º contato',
+      body: `${semSDR ? 'Sua loja não tem pré-vendedores para triagem — os closers perdem tempo com leads não qualificados. ' : ''}${semCRM ? 'Sem CRM, leads são esquecidos no WhatsApp. ' : ''}Pesquisas do setor mostram que 78% dos leads não respondidos em 5 minutos nunca convertem.`,
+      solTag: '🤖 Solução AUTOMATIZE — IA de Qualificação',
+      solBody: 'Nossa IA atende o lead nos primeiros 60 segundos, capturando: interesse, meio de pagamento, veículo na troca, valor de entrada e já realizando simulação de crédito antecipada. Seu closer recebe apenas leads quentes, prontos para fechar.'
+    });
+  }
+
+  // Desorganização comercial
+  const nps3 = +document.getElementById('nps3')?.value || 5;
+  if (nps3 <= 5 || semCRM) {
+    diags.push({
+      cls: 'dc-purple', tag: '📊 Gestão Comercial', title: 'Operação sem visibilidade em tempo real',
+      body: `Satisfação com processos do time: ${nps3}/10. ${semCRM ? 'Sem CRM estruturado, não há como saber quantos leads estão em cada etapa do funil.' : 'Mesmo com CRM, a gestão visual do funil pode estar incompleta.'} Decisões sem dados levam a esforços nos lugares errados.`,
+      solTag: '📈 Solução AUTOMATIZE — Dashboard + Redistribuição Inteligente',
+      solBody: 'Criamos dashboards de gestão em tempo real que abrem o funil completo: entrada do lead → triagem → simulação → resultado de crédito → visita física. Redistribuição automática de leads por disponibilidade do closer.'
+    });
+  }
+
+  // Leads reprovados no crédito
+  diags.push({
+    cls: 'dc-green', tag: '💳 Recuperação de Receita', title: 'Leads sem crédito aprovado = receita perdida',
+    body: 'Em média, 30–40% dos leads que chegam à simulação de crédito não são aprovados para financiamento tradicional. Na maioria das lojas, esses leads são simplesmente descartados — uma fonte de receita desperdiçada.',
+    solTag: '♻️ Solução AUTOMATIZE — Mecanismo de Recuperação de Leads',
+    solBody: 'Nossa esteira direciona automaticamente os leads reprovados no crédito para o modelo de Consórcio Estruturado. Criamos uma nova linha de receita com clientes que seriam descartados — sem custo adicional de aquisição.'
+  });
+
+  // ROI baixo
+  const nps4 = +document.getElementById('nps4')?.value || 5;
+  if (nps4 <= 6 || (cpl !== 'N/A' && +cpl > 80)) {
+    diags.push({
+      cls: 'dc-warn', tag: '📡 ROI de Marketing', title: 'Investimento gerando cliques, não vendas',
+      body: `Satisfação com marketing: ${nps4}/10. ${cpl !== 'N/A' ? `CPL atual de R$${cpl} — ` : ''}O problema não é quanto você investe, mas onde e como. Campanhas genéricas no setor automotivo geram curiosos, não compradores.`,
+      solTag: '🎯 Solução AUTOMATIZE — Tráfego de Alta Performance',
+      solBody: 'Gestão de tráfego especializada em conversão real: segmentação por intenção de compra, geolocalização por raio da loja, criativos com gatilhos do setor automotivo e otimização contínua por custo por venda (não por clique).'
+    });
+  }
+
+  document.getElementById('diagGrid').innerHTML = diags.map(d => `
+    <div class="diag-card ${d.cls}">
+      <div class="dc-tag">${d.tag}</div>
+      <div class="dc-title">${d.title}</div>
+      <div class="dc-body">${d.body}</div>
+      <div class="dc-solution">
+        <div class="dc-solution-title">${d.solTag}</div>
+        <p>${d.solBody}</p>
+      </div>
+    </div>`).join('');
+
+  // Animate funnel bars
+  setTimeout(() => {
+    document.querySelectorAll('.funnel-bar-inner').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0';
+      setTimeout(() => { el.style.width = w; }, 50);
+    });
+  }, 100);
+
+  // JSON output
+  const jsonData = buildJSON();
+  document.getElementById('jsonOutput').textContent = JSON.stringify(jsonData, null, 2);
+}
+
+function buildJSON() {
+  const s = state.answers;
+  const est = +s.q1 || 0, vend = +s.q2 || 0;
+  return {
+    meta: {
+      timestamp: new Date().toISOString(),
+      fonte: 'Raio-X AUTOMATIZE',
+      versao: '2.0'
+    },
+    fase1_estoque: {
+      estoque_atual: +s.q1 || 0,
+      media_vendas_mensais: +s.q2 || 0,
+      giro_estoque: est > 0 && vend > 0 ? +(vend/est).toFixed(2) : null,
+      alerta_capital_parado: est > 0 && vend > 0 && (vend/est) < 0.5
+    },
+    fase2_marketing: {
+      faz_trafego_pago: s.q3 || null,
+      modelo_gestao: s.q4 || null,
+      custo_gestao_mensal: +s.q5 || 0,
+      verba_midia_mensal: +s.q6 || 0,
+      leads_trafego_pago_mes: +s.q7 || 0,
+      cpl_calculado: s.cpl_calculado ? +s.cpl_calculado : null
+    },
+    fase3_operacao: {
+      vendas_fluxo_espontaneo: +s.q8 || 0,
+      vendas_organicas_vendedores: +s.q9 || 0,
+      numero_closers: +s.q10 || 0,
+      possui_sdr_prevenda: s.q11 || null,
+      crm_utilizado: s.q12 || null
+    },
+    fase4_satisfacao: {
+      nps_resultados_vendas: +document.getElementById('nps1')?.value || 5,
+      nps_qualidade_leads: +document.getElementById('nps2')?.value || 5,
+      nps_processos_time: +document.getElementById('nps3')?.value || 5,
+      nps_estrategia_marketing: +document.getElementById('nps4')?.value || 5,
+      nps_media: +((+document.getElementById('nps1')?.value + +document.getElementById('nps2')?.value + +document.getElementById('nps3')?.value + +document.getElementById('nps4')?.value) / 4).toFixed(1)
+    },
+    fase5_visao: {
+      meta_crescimento_3meses_pct: +s.q14 || null,
+      dominio_metricas: s.q15 || null
+    },
+    score_diagnostico: {
+      performance_score: state.perfScore,
+      classificacao: state.perfScore >= 70 ? 'Alto' : state.perfScore >= 45 ? 'Médio' : 'Crítico',
+      prioridades_detectadas: [
+        s.q11 === 'Não' ? 'ausencia_prevenda' : null,
+        s.q12 === 'Não utilizo' ? 'ausencia_crm' : null,
+        s.q3 === 'Não' ? 'sem_trafego_pago' : null,
+        s.cpl_calculado && +s.cpl_calculado > 80 ? 'cpl_alto' : null,
+      ].filter(Boolean)
+    }
+  };
+}
+
+function sendToAPI() {
+  const data = buildJSON();
+  console.log('[AUTOMATIZE] Dados para envio:', data);
+  alert('✅ Em produção, esses dados seriam enviados para sua API / Make.com / Supabase!\n\nAcesse o console do navegador para ver o JSON completo.');
+}
+
+// ─── Start ────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
