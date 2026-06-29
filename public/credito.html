@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnóstico Gratuito de Crédito Automotivo | Inverta o Não</title>
+  <meta name="description" content="Teve o crédito reprovado? Descubra o motivo em 1 minuto e receba um plano gratuito para conquistar a aprovação do seu carro." />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#f0fdf4',
+              100: '#dcfce7',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              900: '#14532d',
+            },
+            gold: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            },
+            dark: {
+              800: '#0f172a',
+              900: '#020617',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'fade-in-up':  'fadeInUp 0.5s ease forwards',
+            'pulse-slow':  'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite',
+            'spin-slow':   'spin 1.2s linear infinite',
+            'bounce-in':   'bounceIn 0.4s ease forwards',
+          },
+          keyframes: {
+            fadeInUp: {
+              '0%':   { opacity: '0', transform: 'translateY(28px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            bounceIn: {
+              '0%':   { transform: 'scale(0.85)', opacity: '0' },
+              '60%':  { transform: 'scale(1.04)', opacity: '1' },
+              '100%': { transform: 'scale(1)' },
+            },
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Base ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #020617;
+      color: #f1f5f9;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Gradients & Glows ── */
+    .bg-hero {
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34,197,94,.25) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(245,158,11,.1) 0%, transparent 60%),
+        #020617;
+    }
+
+    .glow-green {
+      box-shadow: 0 0 32px rgba(34,197,94,.45), 0 4px 24px rgba(0,0,0,.6);
+    }
+    .glow-green:hover {
+      box-shadow: 0 0 48px rgba(34,197,94,.65), 0 8px 32px rgba(0,0,0,.7);
+    }
+    .glow-gold {
+      box-shadow: 0 0 24px rgba(245,158,11,.4), 0 4px 16px rgba(0,0,0,.5);
+    }
+
+    /* ── Progress bar ── */
+    #progress-bar-fill {
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      box-shadow: 0 0 12px rgba(34,197,94,.6);
+    }
+
+    /* ── Screens ── */
+    .screen { display: none; animation: fadeInUp 0.45s ease forwards; }
+    .screen.active { display: flex; }
+
+    /* ── Option buttons ── */
+    .option-btn {
+      background: rgba(255,255,255,.04);
+      border: 2px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      padding: 1.1rem 1.4rem;
+      color: #e2e8f0;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-align: left;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .option-btn::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(34,197,94,.15);
+      opacity: 0;
+      transition: opacity .18s ease;
+    }
+    .option-btn:hover {
+      border-color: rgba(34,197,94,.6);
+      background: rgba(34,197,94,.07);
+      transform: translateX(4px);
+      color: #fff;
+    }
+    .option-btn:hover::after { opacity: 1; }
+    .option-btn:active { transform: scale(0.97) translateX(2px); }
+    .option-btn.selected {
+      border-color: #22c55e;
+      background: rgba(34,197,94,.15);
+      color: #fff;
+      animation: bounceIn .35s ease forwards;
+    }
+    .option-btn.selected::after { opacity: 1; }
+    .option-icon {
+      font-size: 1.3rem;
+      min-width: 1.6rem;
+      text-align: center;
+    }
+
+    /* ── CTA Primary ── */
+    .btn-primary {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.05rem;
+      border-radius: 14px;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      letter-spacing: -.01em;
+    }
+    .btn-primary:hover   { transform: translateY(-2px); filter: brightness(1.1); }
+    .btn-primary:active  { transform: scale(0.97); }
+    .btn-primary:disabled {
+      opacity: .6; cursor: not-allowed;
+      transform: none; filter: none;
+    }
+
+    /* ── Badge ── */
+    .badge-free {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: rgba(245,158,11,.12);
+      border: 1.5px solid rgba(245,158,11,.4);
+      border-radius: 99px;
+      padding: .35rem .85rem;
+      font-size: .78rem;
+      font-weight: 700;
+      color: #fbbf24;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 24px;
+      backdrop-filter: blur(12px);
+    }
+
+    /* ── Loading dots ── */
+    .loading-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: loadBounce 1.2s ease infinite;
+    }
+    .loading-dot:nth-child(2) { animation-delay: .2s; }
+    .loading-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes loadBounce {
+      0%, 80%, 100% { transform: scale(0.8); opacity: .4; }
+      40%            { transform: scale(1.2); opacity: 1; }
+    }
+
+    /* ── Spinner ── */
+    .spinner {
+      width: 56px; height: 56px;
+      border: 4px solid rgba(34,197,94,.2);
+      border-top-color: #22c55e;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Form inputs ── */
+    .form-input {
+      background: rgba(255,255,255,.06);
+      border: 1.5px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      padding: .85rem 1rem;
+      color: #f1f5f9;
+      font-size: 1rem;
+      width: 100%;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .form-input::placeholder { color: rgba(255,255,255,.3); }
+    .form-input:focus {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34,197,94,.15);
+    }
+    .form-input.error {
+      border-color: #f87171;
+      box-shadow: 0 0 0 3px rgba(248,113,113,.15);
+    }
+    .form-label {
+      display: block;
+      font-size: .85rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: .4rem;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+    .error-msg {
+      font-size: .78rem;
+      color: #f87171;
+      margin-top: .3rem;
+      display: none;
+    }
+
+    /* ── Success screen ── */
+    .checkmark-circle {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: rgba(34,197,94,.15);
+      border: 3px solid #22c55e;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem;
+      animation: bounceIn .5s .2s both;
+    }
+
+    /* ── Particles background hint ── */
+    .dot-grid {
+      background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* ── Responsive tweaks ── */
+    @media (max-width: 480px) {
+      .btn-primary { font-size: .95rem; padding: .9rem 1.4rem; }
+      .option-btn  { font-size: .95rem; padding: 1rem 1.1rem; }
+    }
+  </style>
+</head>
+<body class="bg-hero dot-grid">
+
+  <!-- ════════════════════════════════════════════
+       PROGRESS BAR (hidden on screen 1 & 5)
+  ════════════════════════════════════════════ -->
+  <div id="progress-wrapper" class="fixed top-0 left-0 right-0 z-50 hidden">
+    <div class="h-1.5 bg-slate-800">
+      <div id="progress-bar-fill" class="h-full rounded-r-full" style="width: 0%"></div>
+    </div>
+    <div class="flex items-center justify-between px-4 py-2 bg-slate-900/80 backdrop-blur-md border-b border-white/5">
+      <button id="btn-back" onclick="goBack()" class="flex items-center gap-1.5 text-slate-400 hover:text-white transition-colors text-sm font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Voltar
+      </button>
+      <span id="progress-label" class="text-xs font-semibold text-slate-400 tracking-widest uppercase">Pergunta 1 de 4</span>
+      <div class="badge-free">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        100% Gratuito
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       CONTAINER PRINCIPAL
+  ════════════════════════════════════════════ -->
+  <main class="flex flex-col items-center justify-center min-h-screen px-4 py-8">
+
+    <!-- ── TELA 1: HERO ────────────────────────── -->
+    <section id="screen-1" class="screen active flex-col items-center justify-center text-center max-w-2xl mx-auto w-full">
+      <!-- Badge -->
+      <div class="badge-free mb-6 glow-gold">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        Análise 100% Gratuita · Resultado em 1 Minuto
+      </div>
+
+      <!-- Emoji car -->
+      <div class="text-6xl mb-4 animate-bounce-in" style="animation: bounceIn .6s .1s both;">🚗</div>
+
+      <!-- Headline -->
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight mb-4" style="letter-spacing:-.02em;">
+        Teve o crédito reprovado<br class="hidden sm:block"/>
+        para o seu <span class="text-brand-400">carro novo?</span><br/>
+        <span class="text-gold-400">Vamos virar esse jogo!</span>
+      </h1>
+
+      <!-- Subheadline -->
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-lg mx-auto mb-8">
+        Descubra <strong class="text-white">o motivo exato da recusa</strong> em 1 minuto e ganhe um
+        <strong class="text-brand-400">Diagnóstico Gratuito</strong> para reavaliar o seu perfil
+        e buscar a sua aprovação.
+      </p>
+
+      <!-- CTA -->
+      <button onclick="startQuiz()" class="btn-primary glow-green w-full sm:w-auto text-lg px-8 py-4 mb-6">
+        Iniciar Meu Diagnóstico Gratuito ➔
+      </button>
+
+      <!-- Social proof / trust -->
+      <div class="flex flex-wrap justify-center gap-4 text-sm text-slate-400">
+        <span class="flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          Seus dados são seguros
+        </span>
+        <span class="flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Sem consultar o SPC/Serasa agora
+        </span>
+        <span class="flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Menos de 1 minuto
+        </span>
+      </div>
+
+      <!-- Cars strip -->
+      <div class="mt-10 opacity-20 text-4xl tracking-widest select-none" aria-hidden="true">
+        🚘 🚙 🚗 🚕 🚐
+      </div>
+    </section>
+
+    <!-- ── TELA 2: QUIZ ────────────────────────── -->
+    <section id="screen-quiz" class="screen flex-col items-start max-w-xl mx-auto w-full pt-28 pb-10">
+      <!-- Pergunta dinâmica -->
+      <div id="quiz-inner" class="w-full"></div>
+    </section>
+
+    <!-- ── TELA 3: LOADING ─────────────────────── -->
+    <section id="screen-loading" class="screen flex-col items-center justify-center text-center max-w-md mx-auto w-full min-h-screen gap-6">
+      <div class="spinner"></div>
+
+      <div class="flex gap-2 mt-2">
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+      </div>
+
+      <p id="loading-text" class="text-lg font-semibold text-white transition-all duration-500">
+        Analisando perfil...
+      </p>
+      <p class="text-slate-400 text-sm">Por favor, aguarde um instante ☕</p>
+    </section>
+
+    <!-- ── TELA 4: CAPTURA DE LEAD ─────────────── -->
+    <section id="screen-lead" class="screen flex-col items-center max-w-lg mx-auto w-full pt-8 pb-10 gap-6">
+
+      <!-- Check + headline -->
+      <div class="text-center w-full">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-brand-500/20 border-2 border-brand-500 text-2xl mb-4 glow-green">✅</div>
+        <h2 class="text-2xl sm:text-3xl font-black text-white mb-2">Análise Concluída<br/>com Sucesso!</h2>
+        <p class="text-slate-300 text-base leading-relaxed">
+          Descobrimos <strong class="text-white">onde o banco recusou</strong>. Para onde enviamos
+          o seu Diagnóstico e o plano para reavaliar seu crédito?
+        </p>
+      </div>
+
+      <!-- Form -->
+      <div class="card w-full p-6 sm:p-8">
+        <form id="lead-form" onsubmit="submitLead(event)" novalidate class="flex flex-col gap-5">
+
+          <!-- Nome -->
+          <div>
+            <label class="form-label" for="f-nome">Seu Nome Completo</label>
+            <input id="f-nome" type="text" class="form-input" placeholder="Ex: João da Silva" autocomplete="name" />
+            <p class="error-msg" id="err-nome">Por favor, informe seu nome completo.</p>
+          </div>
+
+          <!-- E-mail -->
+          <div>
+            <label class="form-label" for="f-email">Seu Melhor E-mail</label>
+            <input id="f-email" type="email" class="form-input" placeholder="joao@email.com" autocomplete="email" />
+            <p class="error-msg" id="err-email">Informe um e-mail válido.</p>
+          </div>
+
+          <!-- WhatsApp -->
+          <div>
+            <label class="form-label" for="f-whatsapp">
+              <span class="text-brand-400">WhatsApp</span> (com DDD)
+            </label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm select-none">🇧🇷</span>
+              <input id="f-whatsapp" type="tel" class="form-input pl-9" placeholder="(11) 91234-5678" maxlength="15" autocomplete="tel" />
+            </div>
+            <p class="error-msg" id="err-whatsapp">Informe um número de WhatsApp válido.</p>
+          </div>
+
+          <!-- Privacidade -->
+          <p class="text-xs text-slate-500 text-center leading-relaxed">
+            🔒 Seus dados são protegidos. Nunca venderemos ou compartilharemos suas informações com terceiros.
+          </p>
+
+          <!-- Submit -->
+          <button type="submit" id="btn-submit" class="btn-primary glow-green w-full text-base py-4 mt-1">
+            <span id="btn-submit-text">Quero Receber Minha Análise e Realizar Meu Sonho 🚀</span>
+            <svg id="btn-submit-spinner" class="hidden animate-spin ml-2 w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Mini resume das respostas -->
+      <div class="card w-full p-4 text-sm text-slate-400">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Suas respostas do diagnóstico</p>
+        <div id="answers-summary" class="flex flex-col gap-1"></div>
+      </div>
+    </section>
+
+    <!-- ── TELA 5: SUCESSO ─────────────────────── -->
+    <section id="screen-success" class="screen flex-col items-center justify-center text-center max-w-md mx-auto w-full min-h-screen gap-5">
+      <div class="checkmark-circle">🎉</div>
+
+      <h2 class="text-3xl font-black text-white">Pronto! Deu Certo!</h2>
+      <p class="text-slate-300 text-base leading-relaxed">
+        Recebemos suas informações! Nossa equipe vai analisar o seu diagnóstico e entrar em contato pelo seu WhatsApp em breve.
+      </p>
+
+      <div class="card w-full p-5 text-left">
+        <p class="text-sm font-semibold text-brand-400 mb-2">✅ O que acontece agora?</p>
+        <ul class="text-slate-300 text-sm space-y-2">
+          <li class="flex items-start gap-2"><span class="text-gold-400 mt-0.5">1.</span> Nosso especialista analisa o seu perfil</li>
+          <li class="flex items-start gap-2"><span class="text-gold-400 mt-0.5">2.</span> Identificamos as melhores alternativas para sua aprovação</li>
+          <li class="flex items-start gap-2"><span class="text-gold-400 mt-0.5">3.</span> Você recebe um contato pelo WhatsApp com o plano completo</li>
+        </ul>
+      </div>
+
+      <button onclick="restartQuiz()" class="text-slate-500 hover:text-slate-300 transition text-sm mt-2 underline underline-offset-4">
+        Indicar para um amigo? Iniciar novo diagnóstico
+      </button>
+    </section>
+
+  </main>
+
+  <!-- ════════════════════════════════════════════
+       JAVASCRIPT
+  ════════════════════════════════════════════ -->
+  <script>
+    // ─────────────────────────────────────────────
+    // CONFIGURAÇÃO DO WEBHOOK
+    // Substitua a URL abaixo pelo seu endpoint real:
+    // - Google Sheets via Make/Zapier: cole a URL do webhook aqui
+    // - CRM / API própria: cole o endpoint POST aqui
+    // ─────────────────────────────────────────────
+    const WEBHOOK_URL = ''; // ← INSIRA SUA URL AQUI
+
+    // ── Perguntas do Quiz ──────────────────────────────
+    const QUESTIONS = [
+      {
+        id: 'renda',
+        label: 'Pergunta 1 de 4',
+        progress: 25,
+        title: 'Qual é a sua renda média\npor mês?',
+        subtitle: 'Inclua salário, freelas ou qualquer outra fonte de renda.',
+        options: [
+          { icon: '💸', text: 'Até R$ 2.000',          value: 'ate_2000'     },
+          { icon: '💰', text: 'De R$ 2.000 a R$ 4.000', value: '2000_4000'   },
+          { icon: '💵', text: 'De R$ 4.000 a R$ 7.000', value: '4000_7000'   },
+          { icon: '🤑', text: 'Mais de R$ 7.000',       value: 'acima_7000'  },
+        ]
+      },
+      {
+        id: 'nome_sujo',
+        label: 'Pergunta 2 de 4',
+        progress: 50,
+        title: 'Hoje, você tem algum nome sujo\nou está negativado?',
+        subtitle: 'Nome sujo = dívida registrada no SPC ou Serasa.',
+        options: [
+          { icon: '😔', text: 'Sim, tenho nome sujo',         value: 'sim'         },
+          { icon: '😊', text: 'Não, meu nome está limpo',     value: 'nao'         },
+          { icon: '🤔', text: 'Não tenho certeza',            value: 'incerto'     },
+        ]
+      },
+      {
+        id: 'score',
+        label: 'Pergunta 3 de 4',
+        progress: 75,
+        title: 'Você sabe como está a sua nota\nde crédito (o seu Score)?',
+        subtitle: 'O Score é uma pontuação de 0 a 1000 que os bancos usam.',
+        options: [
+          { icon: '📈', text: 'Sim, ele está alto',                      value: 'alto'    },
+          { icon: '📉', text: 'Sim, ele está baixo',                     value: 'baixo'   },
+          { icon: '❓', text: 'Não faço a menor ideia do meu Score',     value: 'nao_sei' },
+        ]
+      },
+      {
+        id: 'tentativa',
+        label: 'Pergunta 4 de 4',
+        progress: 100,
+        title: 'Quando você tentou\nfinanciar o carro?',
+        subtitle: 'Isso nos ajuda a entender a urgência da sua situação.',
+        options: [
+          { icon: '⚡', text: 'Nesta semana',         value: 'esta_semana'    },
+          { icon: '📅', text: 'No último mês',        value: 'ultimo_mes'     },
+          { icon: '🗓️', text: 'Há mais de 3 meses',  value: 'mais_3_meses'   },
+        ]
+      },
+    ];
+
+    // ── Estado da aplicação ──────────────────────────
+    let state = {
+      currentQuestion: 0,
+      answers: {},
+      history: ['screen-1'],   // histórico de telas para o botão "Voltar"
+    };
+
+    // ── Utilitários de tela ──────────────────────────
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById(id);
+      el.classList.add('active');
+      // Força reflow para re-disparar a animação
+      void el.offsetWidth;
+
+      // Esconde/mostra a progress bar
+      const pw = document.getElementById('progress-wrapper');
+      if (id === 'screen-quiz') {
+        pw.classList.remove('hidden');
+      } else {
+        pw.classList.add('hidden');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goBack() {
+      if (state.history.length <= 1) return;
+      state.history.pop();
+      const prev = state.history[state.history.length - 1];
+
+      if (prev === 'screen-quiz') {
+        if (state.currentQuestion > 0) {
+          state.currentQuestion--;
+          renderQuestion();
+        } else {
+          showScreen('screen-1');
+          state.history = ['screen-1'];
+        }
+      } else {
+        showScreen(prev);
+      }
+    }
+
+    // ── Inicio do quiz ───────────────────────────────
+    function startQuiz() {
+      state.currentQuestion = 0;
+      state.answers = {};
+      state.history = ['screen-1', 'screen-quiz'];
+      renderQuestion();
+      showScreen('screen-quiz');
+    }
+
+    function restartQuiz() {
+      startQuiz();
+    }
+
+    // ── Renderiza a pergunta atual ────────────────────
+    function renderQuestion() {
+      const q = QUESTIONS[state.currentQuestion];
+
+      // Atualiza barra de progresso
+      document.getElementById('progress-bar-fill').style.width = q.progress + '%';
+      document.getElementById('progress-label').textContent = q.label;
+
+      const container = document.getElementById('quiz-inner');
+
+      const html = `
+        <div class="animate-fade-in-up">
+          <!-- Ícone de pergunta -->
+          <div class="mb-6">
+            <span class="text-5xl">${['💰','🧾','📊','🚗'][state.currentQuestion]}</span>
+          </div>
+
+          <!-- Título -->
+          <h2 class="text-2xl sm:text-3xl font-black text-white mb-2 whitespace-pre-line leading-tight">${q.title}</h2>
+          <p class="text-slate-400 text-sm sm:text-base mb-6">${q.subtitle}</p>
+
+          <!-- Opções -->
+          <div class="flex flex-col gap-3" role="group" aria-label="Opções de resposta">
+            ${q.options.map((opt, i) => `
+              <button
+                class="option-btn ${state.answers[q.id] === opt.value ? 'selected' : ''}"
+                onclick="selectOption('${q.id}', '${opt.value}', this)"
+                aria-pressed="${state.answers[q.id] === opt.value}"
+                type="button"
+              >
+                <span class="option-icon">${opt.icon}</span>
+                <span>${opt.text}</span>
+                ${state.answers[q.id] === opt.value ? '<span class="ml-auto text-brand-400 font-bold">✓</span>' : ''}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    // ── Seleciona uma opção e avança ─────────────────
+    function selectOption(questionId, value, el) {
+      // Visual: marca como selecionado
+      document.querySelectorAll('.option-btn').forEach(b => {
+        b.classList.remove('selected');
+        b.setAttribute('aria-pressed', 'false');
+        const check = b.querySelector('.ml-auto');
+        if (check) check.remove();
+      });
+      el.classList.add('selected');
+      el.setAttribute('aria-pressed', 'true');
+
+      // Adiciona check
+      const check = document.createElement('span');
+      check.className = 'ml-auto text-brand-400 font-bold';
+      check.textContent = '✓';
+      el.appendChild(check);
+
+      // Salva resposta
+      state.answers[questionId] = value;
+
+      // Avança após pequeno delay (feedback visual)
+      setTimeout(() => {
+        state.currentQuestion++;
+        if (state.currentQuestion < QUESTIONS.length) {
+          renderQuestion();
+        } else {
+          // Fim do quiz → tela de loading
+          state.history.push('screen-loading');
+          showScreen('screen-loading');
+          runLoadingAnimation();
+        }
+      }, 420);
+    }
+
+    // ── Animação de loading ───────────────────────────
+    function runLoadingAnimation() {
+      const phrases = [
+        'Analisando perfil...',
+        'Mapeando motivos da recusa...',
+        'Gerando alternativas de aprovação...',
+        'Finalizando diagnóstico...',
+      ];
+      const el = document.getElementById('loading-text');
+      let i = 0;
+
+      const interval = setInterval(() => {
+        i++;
+        if (i < phrases.length) {
+          el.style.opacity = '0';
+          setTimeout(() => {
+            el.textContent = phrases[i];
+            el.style.opacity = '1';
+          }, 250);
+        }
+      }, 600);
+
+      // Após 2.5s, vai para a tela de captura
+      setTimeout(() => {
+        clearInterval(interval);
+        buildAnswersSummary();
+        state.history.push('screen-lead');
+        showScreen('screen-lead');
+      }, 2600);
+    }
+
+    // ── Monta o resumo das respostas na tela de lead ──
+    function buildAnswersSummary() {
+      const labelMap = {
+        renda:     'Renda mensal',
+        nome_sujo: 'Situação do nome',
+        score:     'Nota de crédito',
+        tentativa: 'Tentativa de financiamento',
+      };
+      const valueMap = {
+        ate_2000:    'Até R$ 2.000',
+        '2000_4000': 'De R$ 2.000 a R$ 4.000',
+        '4000_7000': 'De R$ 4.000 a R$ 7.000',
+        acima_7000:  'Mais de R$ 7.000',
+        sim:         'Sim, tenho nome sujo',
+        nao:         'Nome limpo ✓',
+        incerto:     'Não tem certeza',
+        alto:        'Score alto ✓',
+        baixo:       'Score baixo',
+        nao_sei:     'Não sabe o Score',
+        esta_semana: 'Nesta semana',
+        ultimo_mes:  'No último mês',
+        mais_3_meses:'Há mais de 3 meses',
+      };
+
+      const container = document.getElementById('answers-summary');
+      container.innerHTML = Object.entries(state.answers).map(([k, v]) => `
+        <div class="flex justify-between items-center gap-2 py-1 border-b border-white/5 last:border-0">
+          <span class="text-slate-400">${labelMap[k] || k}</span>
+          <span class="text-white font-medium text-right">${valueMap[v] || v}</span>
+        </div>
+      `).join('');
+    }
+
+    // ── Máscara de WhatsApp ───────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      const wInput = document.getElementById('f-whatsapp');
+      wInput.addEventListener('input', () => {
+        let v = wInput.value.replace(/\D/g, '');
+        if (v.length > 11) v = v.slice(0, 11);
+        if (v.length >= 7) {
+          v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+        } else if (v.length >= 3) {
+          v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+        } else if (v.length > 0) {
+          v = `(${v}`;
+        }
+        wInput.value = v;
+      });
+    });
+
+    // ── Validação do formulário ───────────────────────
+    function validateForm() {
+      let ok = true;
+
+      const nome   = document.getElementById('f-nome');
+      const email  = document.getElementById('f-email');
+      const wapp   = document.getElementById('f-whatsapp');
+
+      // Reset
+      [nome, email, wapp].forEach(inp => {
+        inp.classList.remove('error');
+      });
+      document.querySelectorAll('.error-msg').forEach(e => e.style.display = 'none');
+
+      // Nome: mínimo 2 palavras
+      if (nome.value.trim().split(' ').filter(Boolean).length < 2) {
+        nome.classList.add('error');
+        document.getElementById('err-nome').style.display = 'block';
+        ok = false;
+      }
+
+      // E-mail
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.value.trim())) {
+        email.classList.add('error');
+        document.getElementById('err-email').style.display = 'block';
+        ok = false;
+      }
+
+      // WhatsApp: mínimo 14 chars com máscara
+      const rawPhone = wapp.value.replace(/\D/g, '');
+      if (rawPhone.length < 10) {
+        wapp.classList.add('error');
+        document.getElementById('err-whatsapp').style.display = 'block';
+        ok = false;
+      }
+
+      return ok;
+    }
+
+    // ── Submissão do lead ─────────────────────────────
+    async function submitLead(e) {
+      e.preventDefault();
+      if (!validateForm()) return;
+
+      // Monta o payload completo
+      const payload = {
+        timestamp: new Date().toISOString(),
+        lead: {
+          nome:      document.getElementById('f-nome').value.trim(),
+          email:     document.getElementById('f-email').value.trim().toLowerCase(),
+          whatsapp:  document.getElementById('f-whatsapp').value.trim(),
+        },
+        diagnostico: {
+          renda:     state.answers['renda']     || null,
+          nome_sujo: state.answers['nome_sujo'] || null,
+          score:     state.answers['score']     || null,
+          tentativa: state.answers['tentativa'] || null,
+        },
+        origem: window.location.href,
+        utm: {
+          source:   new URLSearchParams(window.location.search).get('utm_source')   || null,
+          medium:   new URLSearchParams(window.location.search).get('utm_medium')   || null,
+          campaign: new URLSearchParams(window.location.search).get('utm_campaign') || null,
+        }
+      };
+
+      // Log para desenvolvimento
+      console.log('%c[DIAGNÓSTICO CRÉDITO] Lead capturado:', 'color:#22c55e;font-weight:bold', payload);
+
+      // Salva no localStorage (backup local)
+      const existingLeads = JSON.parse(localStorage.getItem('diagnostico_leads') || '[]');
+      existingLeads.push(payload);
+      localStorage.setItem('diagnostico_leads', JSON.stringify(existingLeads));
+
+      // UI: loading no botão
+      const btn    = document.getElementById('btn-submit');
+      const btnTxt = document.getElementById('btn-submit-text');
+      const spin   = document.getElementById('btn-submit-spinner');
+      btn.disabled = true;
+      btnTxt.textContent = 'Enviando...';
+      spin.classList.remove('hidden');
+
+      // ── Envia para o Webhook (se configurado) ─────
+      if (WEBHOOK_URL) {
+        try {
+          await fetch(WEBHOOK_URL, {
+            method:  'POST',
+            mode:    'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(payload),
+          });
+        } catch (err) {
+          console.warn('[DIAGNÓSTICO] Webhook falhou (dados salvos no localStorage):', err);
+        }
+      } else {
+        // Simula delay de envio quando não há webhook
+        await new Promise(res => setTimeout(res, 1200));
+      }
+
+      // Vai para a tela de sucesso
+      showScreen('screen-success');
+    }
+  </script>
+</body>
+</html>
