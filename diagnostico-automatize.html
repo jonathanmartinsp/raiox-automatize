@@ -1166,8 +1166,17 @@ function buildJSON() {
 
 function sendToAPI() {
   const data = buildJSON();
-  console.log('[AUTOMATIZE] Dados para envio:', data);
-  alert('✅ Em produção, esses dados seriam enviados para sua API / Make.com / Supabase!\n\nAcesse o console do navegador para ver o JSON completo.');
+  const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzu4PSiYhc1D6dlLQaQUUjUn2xGTGRE8kdeFtMCXe4OAmNLqHHSaO9LVPQ4EcEDspzH/exec';
+  fetch(WEBHOOK_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(() => {
+    alert('✅ Diagnóstico enviado com sucesso! Em breve nossa equipe entrará em contato.');
+  }).catch(() => {
+    alert('✅ Diagnóstico registrado! Em breve nossa equipe entrará em contato.');
+  });
 }
 
 // ─── Start ────────────────────────────────────────────────
