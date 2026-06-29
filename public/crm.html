@@ -121,29 +121,66 @@
           <summary class="text-xs text-green-400 cursor-pointer font-semibold hover:text-green-300">Ver código para adicionar no Apps Script ▾</summary>
           <div class="mt-2 bg-slate-900 rounded-lg p-3 relative">
             <button onclick="copyCode()" class="absolute top-2 right-2 text-xs text-slate-400 hover:text-white bg-slate-800 px-2 py-1 rounded">Copiar</button>
-            <pre id="code-snippet" class="text-xs text-green-300 overflow-x-auto whitespace-pre-wrap"><code>// Cole esta função no seu Apps Script (junto ao doPost existente)
+            <pre id="code-snippet" class="text-xs text-green-300 overflow-x-auto whitespace-pre-wrap"><code>// ─── SUBSTITUA TODO O CONTEÚDO DO APPS SCRIPT POR ESTE CÓDIGO ───
+
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data  = JSON.parse(e.postData.contents);
+    var f1 = data.fase1_estoque    || {};
+    var f2 = data.fase2_marketing  || {};
+    var f3 = data.fase3_operacao   || {};
+    var f4 = data.fase4_satisfacao || {};
+    var f5 = data.fase5_visao      || {};
+    var sc = data.score_diagnostico || {};
+    var lead = data.lead        || {};
+    var diag = data.diagnostico || {};
+    var row = [
+      new Date().toLocaleString('pt-BR'),
+      lead.nome || '', lead.email || '', lead.whatsapp || '',
+      diag.renda || '', diag.nome_sujo || '', diag.score || '', diag.tentativa || '',
+      f1.estoque_atual || '', f1.media_vendas_mensais || '', f1.giro_estoque || '',
+      f2.faz_trafego_pago || '', f2.modelo_gestao || '', f2.verba_midia_mensal || '',
+      f2.leads_trafego_pago_mes || '', f2.cpl_calculado || '',
+      f3.vendas_fluxo_espontaneo || '', f3.vendas_organicas_vendedores || '',
+      f3.numero_closers || '', f3.possui_sdr_prevenda || '', f3.crm_utilizado || '',
+      f4.nps_resultados_vendas || '', f4.nps_qualidade_leads || '',
+      f4.nps_processos_time || '', f4.nps_estrategia_marketing || '',
+      f5.meta_crescimento_3meses_pct || '', f5.dominio_metricas || '',
+      sc.performance_score || ''
+    ];
+    sheet.appendRow(row);
+    return ContentService.createTextOutput(JSON.stringify({status:'ok'})).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({status:'error',message:err.toString()})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
 function doGet(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     var data  = sheet.getDataRange().getValues();
     if (data.length <= 1) {
-      return ContentService
-        .createTextOutput(JSON.stringify({status:'ok',leads:[]}))
-        .setMimeType(ContentService.MimeType.JSON);
+      return ContentService.createTextOutput(JSON.stringify({status:'ok',leads:[]})).setMimeType(ContentService.MimeType.JSON);
     }
-    var headers = data[0];
+    // Colunas fixas na ordem exata que o doPost escreve
+    var COLS = [
+      'Data','Nome','Email','WhatsApp',
+      'Renda','Nome Sujo','Score','Tentativa',
+      'Estoque','Vendas Mês','Giro','Tráfego Pago',
+      'Gestão Mktg','Verba Mídia','Leads Mês','CPL',
+      'Vendas Fluxo','Vendas Orgânicas','Closers','SDR','CRM',
+      'NPS Vendas','NPS Leads','NPS Processos','NPS Marketing',
+      'Meta Crescimento','Domínio Métricas','Performance Score'
+    ];
     var leads = data.slice(1).map(function(row, i) {
       var obj = { _row: i + 2 };
-      headers.forEach(function(h, j) { obj[String(h)] = row[j]; });
+      COLS.forEach(function(col, j) { obj[col] = j < row.length ? row[j] : ''; });
       return obj;
     });
-    return ContentService
-      .createTextOutput(JSON.stringify({status:'ok', leads:leads}))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({status:'ok',leads:leads})).setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({status:'error',message:err.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({status:'error',message:err.toString()})).setMimeType(ContentService.MimeType.JSON);
   }
 }</code></pre>
           </div>
